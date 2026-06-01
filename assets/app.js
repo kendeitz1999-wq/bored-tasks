@@ -5,10 +5,13 @@
 (function () {
   "use strict";
 
-  var D = window.BT_DATA || { categories: [], quizzes: [], activities: [], blogPosts: [], vibes: [] };
+  var D = window.BT_DATA || { categories: [], quizzes: [], activities: [], blogPosts: [], vibes: [], dares: [], stories: [] };
   if (!D.vibes) D.vibes = [];
+  if (!D.dares) D.dares = [];
+  if (!D.stories) D.stories = [];
   var app = document.getElementById("bt-app");
   var BASE = (window.BTUI && window.BTUI.base) || "";
+  var dareTimer = null; // active Daily Dare countdown interval (cleared on every render)
 
   /* ===== Small helpers =================================================== */
   function h(html) { return html; }
@@ -65,16 +68,16 @@
   function quizCard(q) {
     var cat = catById(q.category) || { name: "Quiz" };
     var resume = hasProgress(q.id);
-    return '<a href="#/quiz/' + q.id + '" class="group block overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm transition hover:-translate-y-1 hover:shadow-xl dark:border-slate-800 dark:bg-slate-900">' +
-      '<div class="relative aspect-[16/10] overflow-hidden">' +
+    return '<a href="#/quiz/' + q.id + '" class="group flex h-full flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm transition hover:-translate-y-1 hover:shadow-xl dark:border-slate-800 dark:bg-slate-900">' +
+      '<div class="relative aspect-[16/10] shrink-0 overflow-hidden">' +
         '<img loading="lazy" src="' + imgUrl(q.image, 700) + '" alt="' + esc(q.title) + '" class="h-full w-full object-cover transition duration-500 group-hover:scale-105">' +
         '<span class="absolute left-3 top-3 rounded-full bg-white/90 px-2.5 py-1 text-[11px] font-bold uppercase tracking-wide text-slate-700 backdrop-blur dark:bg-slate-900/85 dark:text-slate-200">' + esc(cat.name) + '</span>' +
         (q.type === "trivia" ? '<span class="absolute right-3 top-3 rounded-full bg-coral-500 px-2.5 py-1 text-[11px] font-bold text-white">TRIVIA</span>' : "") +
         (resume ? '<span class="absolute bottom-3 left-3 rounded-full bg-teal-400 px-2.5 py-1 text-[11px] font-bold text-slate-900 shadow">▶ Resume</span>' : "") +
       '</div>' +
-      '<div class="p-4">' +
-        '<h3 class="font-extrabold leading-snug text-slate-900 group-hover:text-coral-500 dark:text-white">' + esc(q.title) + '</h3>' +
-        '<p class="mt-1.5 line-clamp-2 text-sm text-slate-500 dark:text-slate-400">' + esc(q.description) + '</p>' +
+      '<div class="flex flex-1 flex-col p-4">' +
+        '<h3 class="line-clamp-2 font-extrabold leading-snug text-slate-900 group-hover:text-coral-500 dark:text-white">' + esc(q.title) + '</h3>' +
+        '<p class="mt-1.5 line-clamp-2 flex-1 text-sm text-slate-500 dark:text-slate-400">' + esc(q.description) + '</p>' +
         '<div class="mt-3 flex items-center gap-3 text-xs font-medium text-slate-400">' +
           '<span class="inline-flex items-center gap-1">' + icon("clock") + (q.estMinutes || 3) + ' min</span>' +
           '<span class="inline-flex items-center gap-1">' + icon("list") + (q.questions ? q.questions.length : 0) + ' Qs</span>' +
@@ -156,7 +159,7 @@
         '<div class="bt-dots pointer-events-none absolute inset-0 text-slate-300 opacity-20 dark:text-slate-700"></div>' +
         '<div class="relative mx-auto max-w-7xl px-4 pb-10 pt-24 sm:px-6 sm:pt-28">' +
           '<div class="mx-auto max-w-3xl text-center bt-fade-up">' +
-            '<span class="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white/70 px-4 py-1.5 text-sm font-semibold text-slate-600 shadow-sm backdrop-blur dark:border-slate-700 dark:bg-slate-900/70 dark:text-slate-300">✨ ' + D.quizzes.length + ' quizzes · ' + D.activities.length + ' boredom busters · ' + D.vibes.length + ' moods</span>' +
+            '<span class="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white/70 px-4 py-1.5 text-sm font-semibold text-slate-600 shadow-sm backdrop-blur dark:border-slate-700 dark:bg-slate-900/70 dark:text-slate-300">✨ ' + D.quizzes.length + ' quizzes · ' + D.activities.length + ' boredom busters · ' + 'a new dare daily</span>' +
             '<h1 class="mt-5 text-5xl font-black leading-[1.02] tracking-tight text-slate-900 dark:text-white sm:text-7xl">Cure Your <span class="bt-gradient-text">Boredom</span></h1>' +
             '<p class="mx-auto mt-5 max-w-xl text-lg text-slate-500 dark:text-slate-400">Hilariously accurate quizzes, brain-melting trivia, and hundreds of things to do right now. Pick one and stay un-bored.</p>' +
             // SEARCH
@@ -175,6 +178,8 @@
       '</section>' +
 
       '<div class="mx-auto max-w-7xl px-4 sm:px-6">' +
+        // TODAY'S DARE - daily hook to bring people back
+        homeDareBand() +
         // TRENDING carousel - big cards lead the page
         '<section class="py-6">' + sectionHead("🔥 Trending now", "What everyone\'s obsessing over today", ["See all", "#/quizzes"]) +
           '<div class="bt-carousel flex gap-4 overflow-x-auto pb-4">' +
@@ -185,9 +190,11 @@
         adSlot("home-top", 90) +
 
         // EXPLORE - a clean "here's what we've got" menu below the trending cards
-        '<section class="py-7">' + sectionHead("Explore", "Four ways to kill some time") +
+        '<section class="py-7">' + sectionHead("Explore", "Six ways to kill some time") +
           '<div class="bt-stagger grid grid-cols-1 gap-3 sm:grid-cols-2">' +
             pillar("🧠", "Quizzes", D.quizzes.length + " to take", "#/quizzes", "from-indigo-500 to-violet-500") +
+            pillar("🎯", "Daily Dare", "Today's challenge", "#/daily-dare", "from-fuchsia-500 to-pink-500") +
+            pillar("🎭", "Story Mode", D.stories.length + " adventures", "#/stories", "from-violet-500 to-indigo-500") +
             pillar("🔮", "Vibe Check", "Pick your mood", "#/vibe", "from-violet-500 to-fuchsia-500") +
             pillar("💡", "Boredom Busters", D.activities.length + " things to do", "#/boredom-busters", "from-purple-500 to-indigo-500") +
             pillar("📖", "Blog", "Long reads", BASE + "blog.html", "from-fuchsia-500 to-purple-600") +
@@ -280,6 +287,7 @@
 
   /* ===== QUIZ PLAYER (one question at a time) ============================ */
   var QP = null; // active quiz player state
+  var SP = null; // active Story Mode player state { story, node }
   function startQuiz(id) {
     var q = qById(id);
     if (!q) { location.hash = "#/quizzes"; return; } // invalid id -> bounce (avoids re-render loop)
@@ -422,8 +430,7 @@
     var scoreLine = (q.type === "trivia" && saved.score != null)
       ? '<div class="mt-3 inline-flex items-center gap-2 rounded-full bg-white/15 px-4 py-1.5 text-sm font-bold">You scored ' + saved.score + '/' + saved.total + ' · ' + saved.pct + '%</div>' : "";
 
-    var shareText = encodeURIComponent('I got "' + res.title + '" on ' + q.title + ' 😂 - find out yours:');
-    var shareUrl = encodeURIComponent(location.href);
+    var shareLine = 'I got "' + res.title + '" on ' + q.title + ' 😂 - find out yours:';
 
     return '<div class="mx-auto max-w-2xl px-4 py-8 sm:px-6">' +
       '<div class="overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-xl dark:border-slate-800 dark:bg-slate-900 bt-fade-up">' +
@@ -439,16 +446,8 @@
           // SHARE - TikTok & Instagram have no public web share intent, so those
           // copy the link + prompt the user to paste it in-app (the realistic flow).
           '<div class="mt-6"><p class="mb-3 text-center text-sm font-bold text-slate-500 dark:text-slate-400">📣 Share your result &amp; tag a friend who needs this</p>' +
-            '<div class="flex flex-wrap justify-center gap-2">' +
-              '<button data-share class="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-teal-400 to-coral-500 px-5 py-3 text-sm font-extrabold text-slate-900 shadow transition hover:scale-105">' + shareIco("share") + 'Share</button>' +
-              socialCopyBtn("TikTok", "bg-black text-white", "tiktok") +
-              socialCopyBtn("Instagram", "bg-gradient-to-tr from-amber-500 via-pink-600 to-purple-600 text-white", "instagram") +
-              shareBtn("https://twitter.com/intent/tweet?text=" + shareText + "&url=" + shareUrl, "X", "bg-black text-white", "x") +
-              shareBtn("https://api.whatsapp.com/send?text=" + shareText + "%20" + shareUrl, "WhatsApp", "bg-[#25d366] text-white", "whatsapp") +
-              shareBtn("https://www.facebook.com/sharer/sharer.php?u=" + shareUrl, "Facebook", "bg-[#1877f2] text-white", "facebook") +
-              shareBtn("https://www.reddit.com/submit?url=" + shareUrl + "&title=" + shareText, "Reddit", "bg-[#ff4500] text-white", "reddit") +
-              '<button data-copy class="inline-flex items-center gap-2 rounded-xl border border-slate-300 px-5 py-3 text-sm font-bold text-slate-600 transition hover:border-teal-400 dark:border-slate-700 dark:text-slate-300">' + shareIco("link") + 'Copy link</button>' +
-            '</div></div>' +
+            shareRow(shareLine, location.href) +
+          '</div>' +
 
           adSlot("results", 250) +
 
@@ -481,6 +480,23 @@
       instagram: '<rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="3.5"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/>'
     }[name];
     return p ? '<svg viewBox="0 0 24 24" class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">' + p + '</svg>' : "";
+  }
+  // The full social-share button row, shared by quiz results, Daily Dare and
+  // story endings. Pass RAW (unencoded) text + url; encoding happens here.
+  // Returns just the button row; callers supply their own heading/wrapper.
+  function shareRow(rawText, rawUrl) {
+    var shareText = encodeURIComponent(rawText);
+    var shareUrl = encodeURIComponent(rawUrl);
+    return '<div class="flex flex-wrap justify-center gap-2">' +
+      '<button data-share class="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-teal-400 to-coral-500 px-5 py-3 text-sm font-extrabold text-slate-900 shadow transition hover:scale-105">' + shareIco("share") + 'Share</button>' +
+      socialCopyBtn("TikTok", "bg-black text-white", "tiktok") +
+      socialCopyBtn("Instagram", "bg-gradient-to-tr from-amber-500 via-pink-600 to-purple-600 text-white", "instagram") +
+      shareBtn("https://twitter.com/intent/tweet?text=" + shareText + "&url=" + shareUrl, "X", "bg-black text-white", "x") +
+      shareBtn("https://api.whatsapp.com/send?text=" + shareText + "%20" + shareUrl, "WhatsApp", "bg-[#25d366] text-white", "whatsapp") +
+      shareBtn("https://www.facebook.com/sharer/sharer.php?u=" + shareUrl, "Facebook", "bg-[#1877f2] text-white", "facebook") +
+      shareBtn("https://www.reddit.com/submit?url=" + shareUrl + "&title=" + shareText, "Reddit", "bg-[#ff4500] text-white", "reddit") +
+      '<button data-copy class="inline-flex items-center gap-2 rounded-xl border border-slate-300 px-5 py-3 text-sm font-bold text-slate-600 transition hover:border-teal-400 dark:border-slate-700 dark:text-slate-300">' + shareIco("link") + 'Copy link</button>' +
+    '</div>';
   }
 
   /* ===== BOREDOM BUSTERS ================================================= */
@@ -653,6 +669,278 @@
   }
   function totalTaken() { return D.quizzes.reduce(function (s, q) { return s + (q.takenCount || 0); }, 0); }
 
+  /* ===== DAILY DARE ===================================================== */
+  // Today's dare is chosen deterministically from the date (same for everyone,
+  // refreshes at local midnight). Same seed math as dailyTask().
+  function dareSeed() { var n = new Date(); return n.getFullYear() * 1000 + (n.getMonth() + 1) * 50 + n.getDate(); }
+  function dareOfDay() { return D.dares.length ? D.dares[dareSeed() % D.dares.length] : null; }
+  function isDareDone(id) { return (LS.get("bt_dares_done") || []).indexOf(id) > -1; }
+  // Deterministic "completed today" count in [1000, 40000], stable for the day.
+  // Math.imul keeps the multiply exact 32-bit (same trick as seededShuffle).
+  function dareCount(seedNum) { var x = Math.imul(seedNum >>> 0, 2654435761) >>> 0; return 1000 + (x % 39001); }
+  // Difficulty pill colors for dares. Separate from diffClass() (activities),
+  // which only knows Easy/Hard - dares add Spicy + Legendary.
+  function dareDiffClass(d) {
+    return d === "Easy" ? "bg-emerald-100 text-emerald-700 dark:bg-emerald-500/15 dark:text-emerald-300"
+      : d === "Medium" ? "bg-amber-100 text-amber-700 dark:bg-amber-500/15 dark:text-amber-300"
+      : d === "Spicy" ? "bg-rose-100 text-rose-600 dark:bg-rose-500/15 dark:text-rose-300"
+      : "bg-fuchsia-100 text-fuchsia-700 dark:bg-fuchsia-500/15 dark:text-fuchsia-300"; // Legendary
+  }
+
+  function viewDailyDare() {
+    var dare = dareOfDay();
+    if (!dare) { location.hash = "#/"; return ""; }
+    var done = isDareDone(dare.id);
+    var count = dareCount(dareSeed());
+    setMeta("Today's Daily Dare: " + dare.title + " | Bored Tasks",
+      "Today's dare - " + dare.description + " A fresh, bold challenge every single day. Mark it done and dare a friend.",
+      "");
+    return '<div class="mx-auto max-w-3xl px-4 py-8 sm:px-6">' +
+      '<nav class="text-sm text-slate-400"><a href="#/" class="hover:text-indigo-500">Home</a> / <span class="text-slate-600 dark:text-slate-300">Daily Dare</span></nav>' +
+      '<div class="mt-4 overflow-hidden rounded-3xl bg-gradient-to-br from-indigo-500 via-violet-500 to-fuchsia-500 p-1 shadow-xl bt-fade-up">' +
+        '<div class="rounded-[1.35rem] bg-white p-6 dark:bg-slate-900 sm:p-8">' +
+          '<div class="flex items-center justify-between gap-3">' +
+            '<span class="inline-flex items-center gap-2 rounded-full bg-indigo-100 px-3 py-1 text-xs font-black uppercase tracking-wider text-indigo-600 dark:bg-indigo-500/15 dark:text-indigo-300">🎯 Today\'s Dare</span>' +
+            '<span class="rounded-full px-3 py-1 text-xs font-extrabold ' + dareDiffClass(dare.difficulty) + '">' + esc(dare.difficulty) + '</span>' +
+          '</div>' +
+          '<div class="mt-5 text-center">' +
+            '<div class="text-6xl sm:text-7xl">' + dare.emoji + '</div>' +
+            '<h1 class="mt-4 text-3xl font-black leading-tight text-slate-900 dark:text-white sm:text-4xl">' + esc(dare.title) + '</h1>' +
+            '<p class="mx-auto mt-3 max-w-xl text-lg text-slate-500 dark:text-slate-400">' + esc(dare.description) + '</p>' +
+          '</div>' +
+          '<div class="mt-5 flex flex-wrap items-center justify-center gap-2">' +
+            '<span class="inline-flex items-center gap-1 rounded-full bg-slate-100 px-3 py-1 text-xs font-bold text-slate-600 dark:bg-slate-800 dark:text-slate-300">' + icon("clock") + esc(dare.time) + '</span>' +
+            (dare.tags || []).map(function (t) { return '<span class="rounded-full bg-slate-100 px-3 py-1 text-xs font-bold text-slate-600 dark:bg-slate-800 dark:text-slate-300">#' + esc(t) + '</span>'; }).join("") +
+          '</div>' +
+          '<div class="mt-6 grid gap-3 sm:grid-cols-2">' +
+            '<div class="rounded-2xl border border-slate-200 bg-slate-50 p-4 text-center dark:border-slate-700 dark:bg-slate-800/50"><p class="text-[11px] font-bold uppercase tracking-wide text-slate-400">Refreshes in</p><p class="mt-1 font-mono text-2xl font-black text-slate-900 dark:text-white" data-dare-countdown>00:00:00</p></div>' +
+            '<div class="rounded-2xl border border-slate-200 bg-slate-50 p-4 text-center dark:border-slate-700 dark:bg-slate-800/50"><p class="text-[11px] font-bold uppercase tracking-wide text-slate-400">Completed today</p><p class="mt-1 text-2xl font-black bt-gradient-text">' + fmt(count) + '</p></div>' +
+          '</div>' +
+          '<button data-dare-done="' + dare.id + '" class="mt-5 w-full rounded-xl px-6 py-4 text-base font-extrabold shadow-lg transition hover:scale-[1.01] ' + (done ? "bg-emerald-500 text-white" : "bg-gradient-to-r from-indigo-500 to-violet-500 text-white") + '">' + (done ? "✓ Completed - you legend" : "○ Mark as Completed") + '</button>' +
+          '<div class="mt-5"><p class="mb-3 text-center text-sm font-bold text-slate-500 dark:text-slate-400">📣 Dare a friend to try it too</p>' + shareRow("Today's Bored Tasks dare: " + dare.title + " 🎯 Think you can do it?", location.href) + '</div>' +
+        '</div>' +
+      '</div>' +
+      '<div class="mt-6 text-center"><a href="#/daily-dare/archive" class="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-5 py-2.5 text-sm font-bold text-slate-600 shadow-sm transition hover:border-indigo-300 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-300">🗂️ Browse the full Dare Vault (' + D.dares.length + ')</a></div>' +
+      adSlot("daily-dare", 90) +
+    '</div>';
+  }
+
+  function viewDareArchive() {
+    var todayId = (dareOfDay() || {}).id;
+    setMeta("The Dare Vault - Every Daily Dare | Bored Tasks",
+      "Browse all " + D.dares.length + " Bored Tasks dares - Easy, Medium, Spicy and Legendary challenges to crush boredom and dare your friends.",
+      "");
+    var cards = D.dares.map(function (dare) {
+      var done = isDareDone(dare.id), isToday = dare.id === todayId;
+      return '<div class="relative flex flex-col rounded-2xl border ' + (isToday ? "border-indigo-400 ring-2 ring-indigo-400/40" : "border-slate-200 dark:border-slate-800") + ' bg-white p-5 shadow-sm transition hover:-translate-y-1 hover:shadow-xl dark:bg-slate-900">' +
+        (isToday ? '<span class="absolute -top-2 left-4 rounded-full bg-gradient-to-r from-indigo-500 to-violet-500 px-2.5 py-0.5 text-[10px] font-black uppercase tracking-wide text-white shadow">Today</span>' : "") +
+        (done ? '<span class="absolute right-3 top-3 rounded-full bg-emerald-500 px-2 py-0.5 text-[10px] font-bold text-white shadow">Done</span>' : "") +
+        '<div class="flex items-start gap-3"><span class="text-3xl">' + dare.emoji + '</span>' +
+          '<h3 class="min-w-0 font-extrabold leading-snug text-slate-900 dark:text-white">' + esc(dare.title) + '</h3></div>' +
+        '<p class="mt-2 flex-1 text-sm text-slate-500 dark:text-slate-400">' + esc(dare.description) + '</p>' +
+        '<div class="mt-3 flex items-center gap-2 text-xs font-semibold text-slate-400">' +
+          '<span class="rounded-full px-2 py-0.5 ' + dareDiffClass(dare.difficulty) + '">' + esc(dare.difficulty) + '</span>' +
+          '<span class="inline-flex items-center gap-1">' + icon("clock") + esc(dare.time) + '</span>' +
+        '</div>' +
+      '</div>';
+    }).join("");
+    return '<div class="mx-auto max-w-7xl px-4 py-8 sm:px-6">' +
+      '<nav class="text-sm text-slate-400"><a href="#/" class="hover:text-indigo-500">Home</a> / <a href="#/daily-dare" class="hover:text-indigo-500">Daily Dare</a> / <span class="text-slate-600 dark:text-slate-300">The Vault</span></nav>' +
+      '<div class="mt-4 text-center">' +
+        '<h1 class="text-4xl font-black tracking-tight text-slate-900 dark:text-white sm:text-5xl">The <span class="bt-gradient-text">Dare Vault</span></h1>' +
+        '<p class="mx-auto mt-3 max-w-xl text-lg text-slate-500 dark:text-slate-400">Every dare in the rotation. One gets the spotlight each day, but you can attempt any of them whenever boredom strikes.</p>' +
+      '</div>' +
+      adSlot("dare-archive", 90) +
+      '<div class="bt-stagger mt-2 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">' + cards + '</div>' +
+    '</div>';
+  }
+
+  // Homepage "Today's Dare" hook (returns "" if no dares are loaded).
+  function homeDareBand() {
+    var dare = dareOfDay();
+    if (!dare) return "";
+    return '<section class="pt-6">' +
+      '<a href="#/daily-dare" class="group block overflow-hidden rounded-3xl bg-gradient-to-br from-indigo-500 via-violet-500 to-fuchsia-500 p-1 shadow-xl transition hover:shadow-2xl">' +
+        '<div class="flex flex-col items-center gap-5 rounded-[1.35rem] bg-white p-6 dark:bg-slate-900 sm:flex-row sm:p-7">' +
+          '<div class="shrink-0 text-6xl sm:text-7xl">' + dare.emoji + '</div>' +
+          '<div class="min-w-0 flex-1 text-center sm:text-left">' +
+            '<div class="flex flex-wrap items-center justify-center gap-2 sm:justify-start">' +
+              '<span class="rounded-full bg-indigo-100 px-3 py-1 text-xs font-black uppercase tracking-wider text-indigo-600 dark:bg-indigo-500/15 dark:text-indigo-300">🎯 Today\'s Dare</span>' +
+              '<span class="rounded-full px-2.5 py-1 text-xs font-extrabold ' + dareDiffClass(dare.difficulty) + '">' + esc(dare.difficulty) + '</span>' +
+            '</div>' +
+            '<h3 class="mt-2 text-2xl font-black leading-tight text-slate-900 dark:text-white sm:text-3xl">' + esc(dare.title) + '</h3>' +
+            '<p class="mt-1 line-clamp-2 text-slate-500 dark:text-slate-400">' + esc(dare.description) + '</p>' +
+            '<p class="mt-2 text-sm font-bold text-indigo-500">' + fmt(dareCount(dareSeed())) + ' people are in today, tap to play →</p>' +
+          '</div>' +
+        '</div>' +
+      '</a>' +
+    '</section>';
+  }
+
+  /* ===== STORY MODE (choose your own adventure) ========================= */
+  function storyById(id) { return D.stories.filter(function (s) { return s.id === id; })[0]; }
+  function storyKey(id) { return "bt_story_" + id; }
+  function getStory(id) { return LS.get(storyKey(id)); }
+  function clearStory(id) { LS.del(storyKey(id)); }
+  function storyEndingCount(s) { return Object.keys(s.nodes).filter(function (k) { return s.nodes[k].ending; }).length; }
+  // Deterministic ending "rarity" (2-29%), stable per story + ending node.
+  function storyRarity(seedStr) {
+    var h = 2166136261 >>> 0;
+    for (var i = 0; i < seedStr.length; i++) { h ^= seedStr.charCodeAt(i); h = Math.imul(h, 16777619); }
+    return 2 + ((h >>> 0) % 28);
+  }
+
+  function storyCard(s) {
+    var prog = getStory(s.id), node = prog && s.nodes[prog.node];
+    var status = node ? (node.ending ? "✓ Finished" : "▶ In progress") : "";
+    return '<a href="#/story/' + s.id + '" class="group flex h-full flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm transition hover:-translate-y-1 hover:shadow-xl dark:border-slate-800 dark:bg-slate-900">' +
+      '<div class="relative aspect-[16/10] shrink-0 overflow-hidden">' +
+        '<img loading="lazy" src="' + imgUrl(s.image, 700) + '" alt="' + esc(s.title) + '" class="h-full w-full object-cover transition duration-500 group-hover:scale-105">' +
+        '<div class="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent"></div>' +
+        '<span class="absolute left-3 top-3 rounded-full bg-gradient-to-r ' + (s.accent || "from-indigo-500 to-violet-500") + ' px-2.5 py-1 text-[11px] font-black uppercase tracking-wide text-white shadow">Story</span>' +
+        (status ? '<span class="absolute bottom-3 left-3 rounded-full bg-white/90 px-2.5 py-1 text-[11px] font-bold text-slate-800 shadow dark:bg-slate-900/85 dark:text-slate-100">' + status + '</span>' : "") +
+      '</div>' +
+      '<div class="flex flex-1 flex-col p-4">' +
+        '<h3 class="line-clamp-2 font-extrabold leading-snug text-slate-900 group-hover:text-indigo-600 dark:text-white">' + esc(s.title) + '</h3>' +
+        '<p class="mt-1.5 line-clamp-3 flex-1 text-sm text-slate-500 dark:text-slate-400">' + esc(s.blurb) + '</p>' +
+        '<div class="mt-3 flex items-center gap-3 text-xs font-semibold text-slate-400">' +
+          '<span class="inline-flex items-center gap-1">🪢 ' + storyEndingCount(s) + ' endings</span>' +
+          '<span class="ml-auto font-bold text-indigo-500">Play →</span>' +
+        '</div>' +
+      '</div></a>';
+  }
+
+  function viewStories() {
+    setMeta("Story Mode - Interactive Choose Your Own Adventure | Bored Tasks",
+      "Dive into " + D.stories.length + " chaotic choose your own adventure stories. Make the choices, unlock multiple endings, and share your fate.",
+      imgUrl(D.stories[0] && D.stories[0].image, 1200));
+    return '<div class="mx-auto max-w-7xl px-4 py-8 sm:px-6">' +
+      '<nav class="text-sm text-slate-400"><a href="#/" class="hover:text-indigo-500">Home</a> / <span class="text-slate-600 dark:text-slate-300">Story Mode</span></nav>' +
+      '<div class="mt-4 text-center">' +
+        '<span class="inline-block rounded-full bg-indigo-100 px-4 py-1.5 text-sm font-bold text-indigo-600 dark:bg-indigo-500/15 dark:text-indigo-300">🎭 Story Mode</span>' +
+        '<h1 class="mt-4 text-4xl font-black tracking-tight text-slate-900 dark:text-white sm:text-6xl">Pick a path, <span class="bt-gradient-text">live the chaos</span></h1>' +
+        '<p class="mx-auto mt-4 max-w-xl text-lg text-slate-500 dark:text-slate-400">Every story bends to your choices. Multiple endings, zero rules, maximum drama. Your decisions, your fate, your screenshot.</p>' +
+      '</div>' +
+      adSlot("stories-top", 90) +
+      '<div class="bt-stagger mt-2 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">' + D.stories.map(storyCard).join("") + '</div>' +
+    '</div>';
+  }
+
+  function viewStoryIntro(id) {
+    var s = storyById(id);
+    if (!s) return viewNotFound();
+    var prog = getStory(id);
+    var hasProg = !!(prog && s.nodes[prog.node]);
+    var finished = hasProg && !!s.nodes[prog.node].ending;
+    setMeta(s.title + " - Story Mode | Bored Tasks", s.blurb, imgUrl(s.image, 1200));
+    return '<div class="mx-auto max-w-3xl px-4 py-8 sm:px-6">' +
+      '<nav class="text-sm text-slate-400"><a href="#/" class="hover:text-indigo-500">Home</a> / <a href="#/stories" class="hover:text-indigo-500">Story Mode</a> / <span class="text-slate-600 dark:text-slate-300">Story</span></nav>' +
+      '<div class="mt-4 overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-lg dark:border-slate-800 dark:bg-slate-900">' +
+        '<div class="relative aspect-[16/9]"><img src="' + imgUrl(s.image, 1100) + '" alt="' + esc(s.title) + '" class="h-full w-full object-cover"><div class="absolute inset-0 bg-gradient-to-t from-black/65 to-transparent"></div>' +
+          '<div class="absolute bottom-0 p-6"><span class="rounded-full bg-gradient-to-r ' + (s.accent || "from-indigo-500 to-violet-500") + ' px-3 py-1 text-xs font-black uppercase tracking-wide text-white">Interactive Story</span><h1 class="mt-2 text-2xl font-black text-white sm:text-4xl">' + esc(s.title) + '</h1></div>' +
+        '</div>' +
+        '<div class="p-6 sm:p-8">' +
+          '<p class="text-lg text-slate-600 dark:text-slate-300">' + esc(s.blurb) + '</p>' +
+          '<div class="mt-5 flex flex-wrap items-center gap-4 text-sm font-semibold text-slate-500 dark:text-slate-400">' +
+            '<span class="inline-flex items-center gap-1.5">🪢 ' + storyEndingCount(s) + ' possible endings</span>' +
+            '<span class="inline-flex items-center gap-1.5">🎭 Choices that actually matter</span>' +
+          '</div>' +
+          (finished ? '<div class="mt-6 rounded-2xl border border-indigo-200 bg-indigo-50 p-4 dark:border-indigo-500/30 dark:bg-indigo-500/10"><p class="text-sm font-semibold text-indigo-700 dark:text-indigo-300">You reached an ending last time. Replay to chase a different one.</p></div>'
+            : hasProg ? '<div class="mt-6 rounded-2xl border border-indigo-200 bg-indigo-50 p-4 dark:border-indigo-500/30 dark:bg-indigo-500/10"><p class="text-sm font-semibold text-indigo-700 dark:text-indigo-300">You have a story in progress. Pick up right where you left off.</p></div>' : "") +
+          '<div class="mt-6 flex flex-col gap-3 sm:flex-row">' +
+            (hasProg
+              ? '<a href="#/story/' + s.id + '?play=1" class="flex-1 rounded-xl bg-gradient-to-r from-indigo-500 to-violet-500 px-6 py-4 text-center text-base font-extrabold text-white shadow-lg transition hover:scale-[1.02]">▶ ' + (finished ? "See your ending" : "Resume story") + '</a><a href="#/story/' + s.id + '?restart=1&play=1" class="rounded-xl border border-slate-300 px-6 py-4 text-center text-base font-bold text-slate-600 transition hover:border-indigo-400 hover:text-indigo-500 dark:border-slate-700 dark:text-slate-300">Start over</a>'
+              : '<a href="#/story/' + s.id + '?play=1" class="flex-1 rounded-xl bg-gradient-to-r from-indigo-500 to-violet-500 px-6 py-4 text-center text-base font-extrabold text-white shadow-lg transition hover:scale-[1.02]">Begin story →</a>') +
+          '</div>' +
+          adSlot("story-intro", 100) +
+        '</div>' +
+      '</div></div>';
+  }
+
+  function startStory(id) {
+    var s = storyById(id);
+    if (!s) { location.hash = "#/stories"; return; }
+    var prog = getStory(id);
+    var startNode = (prog && s.nodes[prog.node]) ? prog.node : s.start;
+    SP = { story: s, node: startNode, path: (prog && prog.path) ? prog.path.slice() : [] };
+    setMeta("Playing: " + s.title + " - Story Mode | Bored Tasks", s.blurb, imgUrl(s.image, 1200));
+    renderStoryNode();
+  }
+
+  // Renders one story node. Decision nodes show choices (direct listeners, like
+  // the quiz player); ending nodes show a shareable summary screen.
+  function renderStoryNode() {
+    var s = SP.story, node = s.nodes[SP.node];
+    if (!node) { location.hash = "#/stories"; return; }
+    var img = imgUrl(node.image || s.image, 1100);
+    var topBar = '<div class="flex items-center gap-3">' +
+      '<a href="#/stories" class="inline-flex h-9 w-9 items-center justify-center rounded-lg text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800" aria-label="Exit story"><svg viewBox="0 0 24 24" class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg></a>' +
+      '<div class="min-w-0 flex-1"><p class="truncate text-sm font-extrabold text-slate-900 dark:text-white">' + esc(s.title) + '</p></div>' +
+      '<a href="#/story/' + s.id + '?restart=1&play=1" class="shrink-0 text-xs font-semibold text-slate-400 hover:text-indigo-500">↺ Restart</a>' +
+    '</div>';
+
+    if (node.ending) {
+      var e = node.ending, rare = storyRarity(s.id + ":" + SP.node);
+      setMeta(e.title + " - " + s.title + " | Bored Tasks", e.description, img);
+      app.innerHTML = '<div class="mx-auto max-w-2xl px-4 py-6 sm:px-6">' + topBar +
+        '<div class="mt-5 overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-xl dark:border-slate-800 dark:bg-slate-900 bt-fade-up">' +
+          '<div class="relative bg-gradient-to-br ' + (s.accent || "from-indigo-500 to-violet-500") + ' p-1">' +
+            '<div class="relative overflow-hidden rounded-t-[1.4rem]"><img src="' + img + '" alt="' + esc(e.title) + '" class="h-56 w-full object-cover sm:h-64"><div class="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent"></div>' +
+              '<div class="absolute bottom-0 w-full p-6 text-white"><p class="text-sm font-bold uppercase tracking-widest text-white/80">Your ending</p><h1 class="mt-1 text-3xl font-black sm:text-4xl">' + e.emoji + ' ' + esc(e.title) + '</h1></div>' +
+            '</div>' +
+          '</div>' +
+          '<div class="p-6 sm:p-8">' +
+            (node.text ? '<p class="text-xs font-bold uppercase tracking-wide text-indigo-500">The final scene</p><p class="mt-1 italic text-slate-500 dark:text-slate-400">' + esc(node.text) + '</p>' : "") +
+            '<p class="mt-4 text-lg leading-relaxed text-slate-600 dark:text-slate-300">' + esc(e.description) + '</p>' +
+            (e.share ? '<blockquote class="mt-4 rounded-2xl bg-slate-100 p-4 text-center text-lg font-bold italic text-slate-700 dark:bg-slate-800 dark:text-slate-200">"' + esc(e.share) + '"</blockquote>' : "") +
+            '<p class="mt-4 text-center text-sm font-bold text-slate-500 dark:text-slate-400">🪢 Only <span class="bt-gradient-text">' + rare + '%</span> of players reach this ending</p>' +
+            '<div class="mt-5"><p class="mb-3 text-center text-sm font-bold text-slate-500 dark:text-slate-400">📣 Share your fate</p>' + shareRow("I got the " + e.title + " ending in " + s.title + " " + e.emoji + " on Bored Tasks. What would you get?", location.href) + '</div>' +
+            adSlot("story-ending", 100) +
+            '<div class="mt-2 flex flex-col gap-3 sm:flex-row">' +
+              '<a href="#/story/' + s.id + '?restart=1&play=1" class="flex-1 rounded-xl border border-slate-300 px-6 py-3 text-center font-bold text-slate-700 transition hover:border-indigo-400 dark:border-slate-700 dark:text-slate-200">↻ Play again</a>' +
+              '<a href="#/stories" class="flex-1 rounded-xl bg-gradient-to-r from-indigo-500 to-violet-500 px-6 py-3 text-center font-extrabold text-white shadow-lg transition hover:scale-[1.02]">Try another story →</a>' +
+            '</div>' +
+          '</div>' +
+        '</div>' +
+      '</div>';
+      window.scrollTo(0, 0);
+      wireCommon(); // enable the share/copy/social buttons on the ending screen
+      return;
+    }
+
+    // Decision node
+    app.innerHTML = '<div class="mx-auto max-w-2xl px-4 py-6 sm:px-6">' + topBar +
+      '<div class="bt-fade-in mt-5">' +
+        '<div class="overflow-hidden rounded-3xl shadow-md"><div class="relative"><img src="' + img + '" alt="" class="h-52 w-full object-cover sm:h-64"><div class="absolute inset-0 bg-gradient-to-t from-black/55 to-transparent"></div></div></div>' +
+        '<p class="mt-6 text-xl font-bold leading-relaxed text-slate-800 dark:text-slate-100 sm:text-2xl">' + esc(node.text) + '</p>' +
+        '<p class="mt-5 text-xs font-bold uppercase tracking-wider text-slate-400">What do you do?</p>' +
+        '<div class="mt-3 space-y-3">' +
+          node.choices.map(function (c, ci) {
+            return '<button data-choice="' + ci + '" class="bt-option group flex w-full items-center gap-3 rounded-2xl border-2 border-slate-200 bg-white px-5 py-4 text-left transition hover:border-indigo-400 hover:bg-slate-50 active:scale-[.99] dark:border-slate-700 dark:bg-slate-900 dark:hover:bg-slate-800">' +
+              '<span class="flex h-7 w-7 shrink-0 items-center justify-center rounded-full border-2 border-slate-300 text-xs font-bold text-slate-400 group-hover:border-indigo-400 group-hover:text-indigo-500 dark:border-slate-600">' + String.fromCharCode(65 + ci) + '</span>' +
+              '<span class="font-semibold text-slate-700 dark:text-slate-200">' + esc(c.label) + '</span>' +
+              '<span class="ml-auto text-indigo-400 transition group-hover:translate-x-1">→</span>' +
+            '</button>';
+          }).join("") +
+        '</div>' +
+        '<p class="mt-5 text-center text-xs text-slate-400">💾 Your story saves automatically as you go.</p>' +
+      '</div>' +
+    '</div>';
+
+    app.querySelectorAll("[data-choice]").forEach(function (b) {
+      b.addEventListener("click", function () {
+        var ci = parseInt(b.getAttribute("data-choice"), 10);
+        var choice = node.choices[ci];
+        if (!choice || !s.nodes[choice.to]) return;
+        SP.path.push(SP.node);
+        SP.node = choice.to;
+        LS.set(storyKey(s.id), { node: SP.node, path: SP.path, at: Date.now() });
+        renderStoryNode();
+      });
+    });
+    window.scrollTo(0, 0);
+  }
+
   /* ===== Activity detail modal (Boredom Busters) ======================== */
   // Opens a rich modal for one activity. isRandom shows the "random task" label.
   function openActivity(id, isRandom) {
@@ -730,6 +1018,7 @@
 
   function render() {
     injectQuizLdRemove();
+    clearInterval(dareTimer); dareTimer = null; // stop any Daily Dare countdown from the previous view
     var r = parseHash();
     var p = r.parts;
     var html;
@@ -743,6 +1032,13 @@
     else if (p[0] === "results") html = viewResults(p[1]);
     else if (p[0] === "boredom-busters") html = viewBoredom();
     else if (p[0] === "vibe") html = p[1] ? viewVibeResult(p[1]) : viewVibe();
+    else if (p[0] === "daily-dare") html = (p[1] === "archive") ? viewDareArchive() : viewDailyDare();
+    else if (p[0] === "stories") html = viewStories();
+    else if (p[0] === "story") {
+      if (r.query.get("restart") === "1") clearStory(p[1]);
+      if (r.query.get("play") === "1") { startStory(p[1]); wireCommon(); return; }
+      html = viewStoryIntro(p[1]);
+    }
     else if (p[0] === "categories") html = viewCategories();
     else if (p[0] === "search") html = viewSearch(r.query.get("q") || "");
     else html = viewNotFound();
@@ -753,6 +1049,19 @@
     if (window.BTUI) window.BTUI.applyThemeIcon();
     wireCommon();
     animateCounters();
+  }
+
+  /* ===== Daily Dare countdown (ticks to local midnight) ================= */
+  // Self-heals: if the element is gone (navigated away) it stops itself, and at
+  // midnight it re-renders so the new day's dare swaps in.
+  function updateDareCountdown() {
+    var el = app.querySelector("[data-dare-countdown]");
+    if (!el) { clearInterval(dareTimer); dareTimer = null; return; }
+    var now = new Date();
+    var ms = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1, 0, 0, 0, 0) - now;
+    if (ms <= 0) { clearInterval(dareTimer); dareTimer = null; render(); return; }
+    var s = Math.floor(ms / 1000), pad = function (n) { return n < 10 ? "0" + n : "" + n; };
+    el.textContent = pad(Math.floor(s / 3600)) + ":" + pad(Math.floor((s % 3600) / 60)) + ":" + pad(s % 60);
   }
 
   /* ===== Wire delegated events for whatever just rendered =============== */
@@ -802,6 +1111,16 @@
         toast("Link copied! Paste it into your " + net + " bio, story or caption 💫");
       });
     });
+    // Daily Dare: mark today's dare complete (in place, like the vibe save)
+    var dd = app.querySelector("[data-dare-done]");
+    if (dd) dd.addEventListener("click", function () {
+      var on = toggleInList("bt_dares_done", dd.getAttribute("data-dare-done"));
+      dd.className = "mt-5 w-full rounded-xl px-6 py-4 text-base font-extrabold shadow-lg transition hover:scale-[1.01] " + (on ? "bg-emerald-500 text-white" : "bg-gradient-to-r from-indigo-500 to-violet-500 text-white");
+      dd.textContent = on ? "✓ Completed - you legend" : "○ Mark as Completed";
+      toast(on ? "Dare completed. Absolute legend ✓" : "Marked as not done");
+    });
+    // Daily Dare: start the countdown when the dare page is showing
+    if (app.querySelector("[data-dare-countdown]")) { updateDareCountdown(); dareTimer = setInterval(updateDareCountdown, 1000); }
   }
 
   function copyLink() {

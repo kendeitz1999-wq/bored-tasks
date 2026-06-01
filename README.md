@@ -27,8 +27,9 @@ npx serve .
 # or the VS Code "Live Server" extension → "Go Live"
 ```
 
-To deploy, upload the whole folder to any static host - **Netlify, Vercel,
-GitHub Pages, Cloudflare Pages, Firebase Hosting**, or classic shared hosting.
+To deploy, upload the whole folder to any static host. This site is hosted on
+**Cloudflare Pages** (Workers & Pages > Create > Pages > Upload assets, or connect a git
+repo; no build command, output directory = project root). Vercel, GitHub Pages, Netlify, etc. also work.
 There is nothing to compile. Before going live, find-and-replace
 `https://boredtasks.example/` with your real domain in `index.html`,
 `sitemap.xml`, `robots.txt`, and the blog/legal pages' canonical/OG tags.

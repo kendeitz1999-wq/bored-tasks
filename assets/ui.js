@@ -11,22 +11,20 @@
 
   var NAV = [
     { label: "Home",            href: APP + "#/" },
-    { label: "Vibe Check",      href: APP + "#/vibe" },
+    { label: "Daily",           href: APP + "#/daily-dare" },
     { label: "Quizzes",         href: APP + "#/quizzes" },
+    { label: "Stories",         href: APP + "#/stories" },
+    { label: "Vibe Check",      href: APP + "#/vibe" },
     { label: "Boredom Busters", href: APP + "#/boredom-busters" },
     { label: "Categories",      href: APP + "#/categories" },
     { label: "Blog",            href: BASE + "blog.html" },
     { label: "About",           href: BASE + "about.html" }
   ];
 
-  /* ---- SVG bits ---------------------------------------------------------- */
+  /* ---- Logo: clean text wordmark (no icon square) ------------------------ */
   var LOGO = '' +
-    '<a href="' + APP + '#/" class="flex items-center gap-2 group shrink-0" aria-label="Bored Tasks home">' +
-      '<span class="relative inline-flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-teal-400 via-coral-500 to-lime-400 shadow-lg shadow-coral-500/20 transition-transform group-hover:rotate-6">' +
-        // Bored girl slumped at a desk - "bored at school" vibe (scales cleanly at any size)
-        '<svg viewBox="0 0 64 64" class="h-6 w-6 text-slate-900" fill="currentColor"><rect x="8" y="51" width="48" height="4.5" rx="2.2"/><path d="M13 51c0-8 6-13 15-13h11c6 2 9 7 9 13Z"/><path d="M22 16c-12-3-15 5-11 13 2 3 7 3 11 0-4-5-4-9 1-13Z"/><circle cx="34" cy="23" r="11"/><path d="M44 51c1-7-2-13-8-17l-5 4c5 3 7 8 6 13Z"/><path d="M29 30c0 4 4 5 7 2 2-2 1-5-1-5Z"/></svg>' +
-      '</span>' +
-      '<span class="font-extrabold text-lg tracking-tight text-slate-900 dark:text-white">Bored<span class="bt-gradient-text">Tasks</span></span>' +
+    '<a href="' + APP + '#/" class="group inline-flex shrink-0 items-center leading-none" aria-label="Bored Tasks home">' +
+      '<span class="text-xl font-black tracking-tight text-slate-900 transition-transform group-hover:-translate-y-px dark:text-white sm:text-2xl">Bored<span class="bt-gradient-text">Tasks</span></span>' +
     '</a>';
 
   var SUN = '<svg viewBox="0 0 24 24" class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>';
@@ -117,7 +115,7 @@
               social("https://x.com/boredtasks", "X @boredtasks", '<path d="M4 4l16 16M20 4L4 20"/>') +
             '</div>' +
           '</div>' +
-          col("Explore", [["All Quizzes", APP + "#/quizzes"], ["Boredom Busters", APP + "#/boredom-busters"], ["Categories", APP + "#/categories"], ["Random Task", APP + "#/boredom-busters"], ["Search", APP + "#/search"]]) +
+          col("Explore", [["All Quizzes", APP + "#/quizzes"], ["Daily Dare", APP + "#/daily-dare"], ["Story Mode", APP + "#/stories"], ["Boredom Busters", APP + "#/boredom-busters"], ["Categories", APP + "#/categories"], ["Search", APP + "#/search"]]) +
           col("Read", [["Blog", BASE + "blog.html"], ["Why Quizzes Are Addictive", BASE + "blog/why-personality-quizzes-are-addictive.html"], ["100 Ways to Cure Boredom", BASE + "blog/100-ways-to-cure-boredom.html"], ["Beat Procrastination", BASE + "blog/psychology-of-procrastination.html"]]) +
           col("Company", [["About", BASE + "about.html"], ["Contact", BASE + "contact.html"], ["Privacy Policy", BASE + "privacy.html"], ["Terms of Use", BASE + "terms.html"]]) +
         '</div>' +
@@ -171,16 +169,17 @@
 
   /* ---- Boot -------------------------------------------------------------- */
   /* ---- Image fallback ---------------------------------------------------
-     If any stock image 404s (e.g. a stale Unsplash id), swap to a guaranteed
-     placeholder so the UI never shows a broken image. Capture phase so it
-     catches <img> errors that don't bubble. */
+     If any stock image 404s (e.g. a stale Unsplash id), swap to a keyword
+     photo so the UI never shows a broken image AND the replacement still
+     loosely matches the subject (derived from the alt text). Capture phase so
+     it catches <img> errors that don't bubble. */
   function wireImageFallback() {
     document.addEventListener("error", function (e) {
       var t = e.target;
       if (!t || t.tagName !== "IMG" || t.dataset.btFallback) return;
       t.dataset.btFallback = "1";
-      var seed = encodeURIComponent((t.getAttribute("alt") || "bored") .slice(0, 24) || "bored");
-      t.src = "https://picsum.photos/seed/" + seed + "/800/500";
+      var kw = (t.getAttribute("alt") || "").toLowerCase().replace(/[^a-z0-9]+/g, ",").replace(/^,+|,+$/g, "").split(",").filter(Boolean).slice(0, 2).join(",") || "aesthetic,mood";
+      t.src = "https://loremflickr.com/800/500/" + kw + "?lock=7";
     }, true);
   }
 
