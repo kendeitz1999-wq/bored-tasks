@@ -159,7 +159,8 @@
         '<div class="bt-dots pointer-events-none absolute inset-0 text-slate-300 opacity-20 dark:text-slate-700"></div>' +
         '<div class="relative mx-auto max-w-7xl px-4 pb-10 pt-24 sm:px-6 sm:pt-28">' +
           '<div class="mx-auto max-w-3xl text-center bt-fade-up">' +
-            '<h1 class="font-black leading-[0.95] tracking-tight text-slate-900 dark:text-white">' +
+            '<span class="inline-flex items-center gap-1.5 rounded-full bg-indigo-100 px-4 py-1.5 text-sm font-bold text-indigo-600 dark:bg-indigo-500/15 dark:text-indigo-300">✨ ' + D.quizzes.length + ' quizzes · ' + D.activities.length + ' boredom busters · a new dare daily</span>' +
+            '<h1 class="mt-5 font-black leading-[0.95] tracking-tight text-slate-900 dark:text-white">' +
               '<span class="block text-4xl sm:text-6xl">Cure Your</span>' +
               '<span class="block text-6xl bt-gradient-text sm:text-8xl">Boredom</span>' +
             '</h1>' +
