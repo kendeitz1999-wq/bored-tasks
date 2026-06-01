@@ -36,16 +36,16 @@ html, body { overflow-x: clip; max-width: 100%; }
     radial-gradient(36rem 30rem at 94% 9rem,  rgba(139,92,246,.26), transparent 72%);
 }
 
-/* Floating header: fully transparent at the top of the page (so the hero
-   colour flows straight through it) and only fades into frosted glass once you
-   scroll, where it needs a backdrop to stay readable over content. */
-.bt-bar { background: transparent; transition: background .3s ease, box-shadow .3s ease, transform .35s ease; will-change: transform; }
-.bt-bar.is-scrolled {
+/* Floating header: a soft frosted-glass bar at all times (including the very
+   top of the page) so it always looks crisp and stays readable over content.
+   A subtle shadow fades in once you scroll, just for a touch of depth. */
+.bt-bar {
   background: rgba(255,255,255,.72);
   -webkit-backdrop-filter: blur(16px); backdrop-filter: blur(16px);
-  box-shadow: 0 1px 24px -16px rgba(2,6,23,.6);
+  transition: background .3s ease, box-shadow .3s ease, transform .35s ease; will-change: transform;
 }
-.dark .bt-bar.is-scrolled { background: rgba(2,6,23,.62); }
+.dark .bt-bar { background: rgba(2,6,23,.62); }
+.bt-bar.is-scrolled { box-shadow: 0 1px 24px -16px rgba(2,6,23,.6); }
 /* Hide while scrolling down, slide back in on scroll up. */
 .bt-bar.is-hidden { transform: translateY(-100%); }
 body { -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility; }
