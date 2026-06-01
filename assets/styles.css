@@ -1,0 +1,178 @@
+/* styles.css - custom CSS on top of Tailwind: keyframes, scrollbars, chips,
+   hero blobs, article typography and the quiz option states. */
+
+:root {
+  /* Brand palette - "Electric Indigo": one cohesive indigo→violet→fuchsia family.
+     Mirrored by the teal/coral/lime remap in assets/tw.js. Change here + there
+     to re-brand the whole site. */
+  --bt-teal:    #6366f1;  /* indigo  (primary)   */
+  --bt-coral:   #8b5cf6;  /* violet  (secondary) */
+  --bt-lime:    #d946ef;  /* fuchsia (tertiary)  */
+  --bt-ink:     #0b1120;
+}
+
+html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
+/* Base background set here so the correct colour shows on first paint,
+   before the Tailwind CDN finishes loading (prevents a flash). */
+html { background-color: #ffffff; }
+html.dark { background-color: #020617; } /* slate-950 */
+/* Stop any horizontal scroll on mobile. Use "clip" (not "hidden"): hidden turns
+   the page into a scroll container and breaks position:sticky on the header. */
+html, body { overflow-x: clip; max-width: 100%; }
+
+/* Hero glow: soft radial gradients that fade to transparent. The main glow is
+   anchored at the very top so colour flows up behind the (transparent) header
+   instead of stopping under it. */
+.bt-hero-glow {
+  background:
+    radial-gradient(42rem 30rem at 50% 0%,   rgba(99,102,241,.30), transparent 68%),
+    radial-gradient(30rem 24rem at 8% 5rem,   rgba(217,70,239,.16), transparent 72%),
+    radial-gradient(34rem 28rem at 92% 9rem,  rgba(139,92,246,.22), transparent 72%);
+}
+.dark .bt-hero-glow {
+  background:
+    radial-gradient(44rem 32rem at 50% 0%,   rgba(99,102,241,.40), transparent 68%),
+    radial-gradient(30rem 26rem at 6% 5rem,   rgba(217,70,239,.22), transparent 72%),
+    radial-gradient(36rem 30rem at 94% 9rem,  rgba(139,92,246,.26), transparent 72%);
+}
+
+/* Floating header: fully transparent at the top of the page (so the hero
+   colour flows straight through it) and only fades into frosted glass once you
+   scroll, where it needs a backdrop to stay readable over content. */
+.bt-bar { background: transparent; transition: background .3s ease, box-shadow .3s ease, transform .35s ease; will-change: transform; }
+.bt-bar.is-scrolled {
+  background: rgba(255,255,255,.72);
+  -webkit-backdrop-filter: blur(16px); backdrop-filter: blur(16px);
+  box-shadow: 0 1px 24px -16px rgba(2,6,23,.6);
+}
+.dark .bt-bar.is-scrolled { background: rgba(2,6,23,.62); }
+/* Hide while scrolling down, slide back in on scroll up. */
+.bt-bar.is-hidden { transform: translateY(-100%); }
+body { -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility; }
+/* Snappier taps on iOS/Android: remove the grey flash, comfy touch targets. */
+button, a, [role="button"], .bt-option, .bt-chip { -webkit-tap-highlight-color: transparent; touch-action: manipulation; }
+.bt-option { min-height: 56px; } /* generous tap target for quiz answers */
+.bt-chip { min-height: 40px; }
+
+/* Prevent the brief flash of unstyled hero before Tailwind CDN parses. */
+.bt-preload * { transition: none !important; }
+
+/* --------------------------------------------------------------------------
+   Custom scrollbar (subtle, theme-aware)
+   -------------------------------------------------------------------------- */
+* { scrollbar-width: thin; scrollbar-color: rgba(148,163,184,.5) transparent; }
+*::-webkit-scrollbar { width: 10px; height: 10px; }
+*::-webkit-scrollbar-track { background: transparent; }
+*::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, var(--bt-teal), var(--bt-coral));
+  border-radius: 999px;
+  border: 2px solid transparent;
+  background-clip: content-box;
+}
+
+/* Horizontal carousels: hide the scrollbar but keep scroll/snap. */
+.bt-carousel { scrollbar-width: none; scroll-snap-type: x mandatory; }
+.bt-carousel::-webkit-scrollbar { display: none; }
+.bt-carousel > * { scroll-snap-align: start; }
+
+/* --------------------------------------------------------------------------
+   Animations
+   -------------------------------------------------------------------------- */
+@keyframes bt-fade-up { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
+@keyframes bt-fade-in { from { opacity: 0; } to { opacity: 1; } }
+@keyframes bt-pop    { 0% { transform: scale(.96); opacity: .4; } 60% { transform: scale(1.02); } 100% { transform: scale(1); opacity: 1; } }
+@keyframes bt-float  { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-12px); } }
+@keyframes bt-blob   { 0%,100% { border-radius: 42% 58% 63% 37% / 41% 44% 56% 59%; } 50% { border-radius: 58% 42% 38% 62% / 57% 63% 37% 43%; } }
+@keyframes bt-spin    { to { transform: rotate(360deg); } }
+@keyframes bt-shimmer { 100% { transform: translateX(100%); } }
+
+.bt-fade-up   { animation: bt-fade-up .5s cubic-bezier(.22,1,.36,1) both; }
+.bt-fade-in   { animation: bt-fade-in .4s ease both; }
+.bt-pop       { animation: bt-pop .35s cubic-bezier(.22,1,.36,1) both; }
+.bt-float     { animation: bt-float 6s ease-in-out infinite; }
+.bt-blob      { animation: bt-blob 14s ease-in-out infinite; }
+.bt-spin      { animation: bt-spin .8s linear infinite; }
+
+/* Stagger helper - add .bt-stagger to a parent; children fade up in sequence. */
+.bt-stagger > *      { animation: bt-fade-up .5s cubic-bezier(.22,1,.36,1) both; }
+.bt-stagger > *:nth-child(1){animation-delay:.02s}.bt-stagger > *:nth-child(2){animation-delay:.06s}
+.bt-stagger > *:nth-child(3){animation-delay:.10s}.bt-stagger > *:nth-child(4){animation-delay:.14s}
+.bt-stagger > *:nth-child(5){animation-delay:.18s}.bt-stagger > *:nth-child(6){animation-delay:.22s}
+.bt-stagger > *:nth-child(7){animation-delay:.26s}.bt-stagger > *:nth-child(8){animation-delay:.30s}
+.bt-stagger > *:nth-child(9){animation-delay:.34s}.bt-stagger > *:nth-child(n+10){animation-delay:.38s}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: .001ms !important; animation-iteration-count: 1 !important; transition-duration: .001ms !important; scroll-behavior: auto !important; }
+}
+
+/* --------------------------------------------------------------------------
+   Decorative gradient blobs behind the hero
+   -------------------------------------------------------------------------- */
+.bt-blob-shape {
+  position: absolute; filter: blur(46px); opacity: .55; pointer-events: none;
+  border-radius: 42% 58% 63% 37% / 41% 44% 56% 59%;
+}
+.dark .bt-blob-shape { opacity: .4; }
+
+/* Soft grain/dot texture overlay for the hero. */
+.bt-dots {
+  background-image: radial-gradient(currentColor 1px, transparent 1px);
+  background-size: 22px 22px;
+}
+
+/* Gradient text helper. */
+.bt-gradient-text {
+  background-image: linear-gradient(95deg, var(--bt-teal), var(--bt-coral) 55%, var(--bt-lime));
+  -webkit-background-clip: text; background-clip: text; color: transparent;
+}
+
+/* Loading skeleton shimmer. */
+.bt-skeleton { position: relative; overflow: hidden; background: rgba(148,163,184,.18); }
+.bt-skeleton::after {
+  content: ""; position: absolute; inset: 0; transform: translateX(-100%);
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,.35), transparent);
+  animation: bt-shimmer 1.4s infinite;
+}
+
+/* --------------------------------------------------------------------------
+   Long-form article typography (blog posts). Pairs with .bt-prose wrapper.
+   -------------------------------------------------------------------------- */
+.bt-prose { line-height: 1.78; font-size: 1.075rem; }
+.bt-prose h2 { font-size: 1.6rem; font-weight: 800; margin: 2.2rem 0 .8rem; letter-spacing: -.01em; }
+.bt-prose h3 { font-size: 1.25rem; font-weight: 700; margin: 1.6rem 0 .6rem; }
+.bt-prose p  { margin: 0 0 1.15rem; }
+.bt-prose ul, .bt-prose ol { margin: 0 0 1.3rem 1.3rem; }
+.bt-prose ul { list-style: disc; } .bt-prose ol { list-style: decimal; }
+.bt-prose li { margin: .35rem 0; }
+.bt-prose a  { color: var(--bt-coral); font-weight: 600; text-decoration: underline; text-underline-offset: 3px; }
+.bt-prose blockquote {
+  border-left: 4px solid var(--bt-teal); padding: .4rem 0 .4rem 1.1rem; margin: 1.4rem 0;
+  font-style: italic; font-size: 1.15rem; opacity: .9;
+}
+.bt-prose strong { font-weight: 700; }
+
+/* Focus ring for accessibility (keyboard users). */
+:focus-visible { outline: 3px solid var(--bt-teal); outline-offset: 2px; border-radius: 6px; }
+
+/* Hide scroll when modal / mobile menu open. */
+.bt-no-scroll { overflow: hidden; }
+
+/* Filter chips (category + mood pills). */
+.bt-chip {
+  display: inline-flex; align-items: center; gap: .25rem; white-space: nowrap;
+  padding: .5rem .9rem; border-radius: 999px; font-size: .8rem; font-weight: 700;
+  border: 1px solid rgb(226 232 240); background: #fff; color: rgb(71 85 105);
+  transition: all .2s; cursor: pointer;
+}
+.bt-chip:hover { border-color: var(--bt-teal); color: rgb(15 23 42); transform: translateY(-1px); }
+.dark .bt-chip { border-color: rgb(51 65 85); background: rgb(15 23 42); color: rgb(203 213 225); }
+.bt-chip.is-active {
+  background: linear-gradient(90deg, var(--bt-teal), var(--bt-coral));
+  color: #0b1120; border-color: transparent;
+}
+
+/* Option button selected state (quiz). */
+.bt-option.is-selected {
+  border-color: var(--bt-teal);
+  background: linear-gradient(90deg, rgba(99,102,241,.14), rgba(139,92,246,.12)); /* indigo→violet tint */
+}

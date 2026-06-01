@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en" data-base="" data-year="2026" class="bt-preload">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>The Bored Tasks Blog - Boredom, Brains &amp; Behaviour</title>
+  <meta name="description" content="Long reads on why we love quizzes, how to beat boredom and procrastination, and the psychology behind it all. The Bored Tasks blog." />
+  <link rel="canonical" href="https://boredtasks.example/blog.html" />
+  <meta property="og:title" content="The Bored Tasks Blog" />
+  <meta property="og:description" content="Long reads on boredom, brains and behaviour." />
+  <meta name="theme-color" content="#6366f1" />
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0' stop-color='%236366f1'/%3E%3Cstop offset='0.55' stop-color='%238b5cf6'/%3E%3Cstop offset='1' stop-color='%23d946ef'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='32' height='32' rx='8' fill='url(%23g)'/%3E%3Cpath d='M18 5 8 18h6l-2 9 12-15h-7z' fill='%230b1120'/%3E%3C/svg%3E" />
+  <script>(function(){try{if(localStorage.getItem("bt_theme")!=="light")document.documentElement.classList.add("dark");}catch(e){}})();</script>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="assets/tw.js"></script>
+  <link rel="stylesheet" href="assets/styles.css" />
+</head>
+<body class="min-h-screen bg-white text-slate-900 antialiased dark:bg-slate-950 dark:text-slate-100">
+  <header id="bt-header"></header>
+
+  <main class="mx-auto max-w-7xl px-4 py-12 sm:px-6">
+    <nav class="text-sm text-slate-400"><a href="index.html#/" class="hover:text-teal-500">Home</a> / <span class="text-slate-600 dark:text-slate-300">Blog</span></nav>
+    <h1 class="mt-4 text-4xl font-black tracking-tight sm:text-5xl">The <span class="bt-gradient-text">Bored Tasks</span> Blog</h1>
+    <p class="mt-4 max-w-2xl text-lg text-slate-500 dark:text-slate-400">The psychology of boredom, the science of why quizzes are so addictive, and a frankly absurd number of ideas for things to do. Grab a coffee and dive in.</p>
+
+    <!-- ===== ADSENSE PLACEHOLDER (blog index banner) ===== -->
+    <div class="bt-ad my-8 flex h-[90px] items-center justify-center rounded-xl border border-dashed border-slate-300 text-xs font-medium uppercase tracking-widest text-slate-400 dark:border-slate-700" data-ad-slot="blog-index">Advertisement</div>
+
+    <div id="blog-grid" class="bt-stagger grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3"></div>
+  </main>
+
+  <footer id="bt-footer"></footer>
+
+  <!-- data.js gives us BT_DATA.blogPosts; we render cards from it. -->
+  <script src="assets/data.js"></script>
+  <script src="assets/ui.js"></script>
+  <script>
+    (function () {
+      function imgUrl(u, w) { return u && u.indexOf("images.unsplash.com") > -1 ? u + (u.indexOf("?") > -1 ? "&" : "?") + "auto=format&fit=crop&w=" + w + "&q=70" : u; }
+      function esc(s){return String(s||"").replace(/[&<>"]/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c];});}
+      var grid = document.getElementById("blog-grid");
+      grid.innerHTML = (window.BT_DATA ? BT_DATA.blogPosts : []).map(function (p) {
+        return '<a href="blog/' + p.slug + '.html" class="group flex flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm transition hover:-translate-y-1 hover:shadow-xl dark:border-slate-800 dark:bg-slate-900">' +
+          '<div class="relative aspect-[16/9] overflow-hidden"><img loading="lazy" src="' + imgUrl(p.image, 700) + '" alt="' + esc(p.title) + '" class="h-full w-full object-cover transition duration-500 group-hover:scale-105"></div>' +
+          '<div class="flex flex-1 flex-col p-5"><span class="text-xs font-bold uppercase tracking-wide text-coral-500">' + esc(p.category) + ' · ' + p.readMinutes + ' min read</span>' +
+          '<h2 class="mt-2 text-lg font-extrabold leading-snug text-slate-900 group-hover:text-coral-500 dark:text-white">' + esc(p.title) + '</h2>' +
+          '<p class="mt-2 flex-1 text-sm text-slate-500 dark:text-slate-400">' + esc(p.excerpt) + '</p>' +
+          '<span class="mt-3 text-sm font-bold text-teal-500">Read article →</span></div></a>';
+      }).join("");
+    })();
+  </script>
+</body>
+</html>

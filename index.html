@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<!-- Single-page app shell. Views render into <main id="bt-app"> via assets/app.js.
+     Blog posts and legal pages are separate .html files. Add content in
+     assets/data.js and assets/quizzes/*.js. See README.md. -->
+<html lang="en" data-base="" data-year="2026" class="bt-preload">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+
+  <!-- ===== SEO / Social meta (app.js updates these per-route) ===== -->
+  <title>Bored Tasks - Cure Your Boredom with Quizzes, Tasks &amp; Epic Ideas</title>
+  <meta name="description" content="Bored? Take addictive personality quizzes and trivia, or pick from hundreds of fun things to do when you're bored. The ultimate boredom-busting playground." />
+  <meta name="keywords" content="quizzes, personality quiz, trivia, things to do when bored, boredom busters, fun quiz, what should I do" />
+  <meta name="author" content="Bored Tasks" />
+  <meta name="theme-color" content="#6366f1" />
+  <link rel="canonical" href="https://boredtasks.example/" />
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="Bored Tasks" />
+  <meta property="og:title" content="Bored Tasks - Cure Your Boredom" />
+  <meta property="og:description" content="Addictive quizzes, trivia and hundreds of fun things to do when you're bored." />
+  <meta property="og:image" content="https://images.unsplash.com/photo-1496843916299-590492c751f4?auto=format&fit=crop&w=1200&q=70" />
+  <meta property="og:url" content="https://boredtasks.example/" />
+
+  <!-- Twitter -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Bored Tasks - Cure Your Boredom" />
+  <meta name="twitter:description" content="Addictive quizzes, trivia and hundreds of fun things to do when you're bored." />
+  <meta name="twitter:image" content="https://images.unsplash.com/photo-1496843916299-590492c751f4?auto=format&fit=crop&w=1200&q=70" />
+
+  <!-- Favicon (inline SVG: a little lightning bolt in brand gradient) -->
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0' stop-color='%236366f1'/%3E%3Cstop offset='0.55' stop-color='%238b5cf6'/%3E%3Cstop offset='1' stop-color='%23d946ef'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='32' height='32' rx='8' fill='url(%23g)'/%3E%3Cpath d='M18 5 8 18h6l-2 9 12-15h-7z' fill='%230b1120'/%3E%3C/svg%3E" />
+
+  <!-- No-FOUC theme bootstrap: sets <html class="dark"> before paint so there's
+       no flash. Default is dark; only an explicit "light" preference opts out. -->
+  <script>
+    (function () {
+      try {
+        if (localStorage.getItem("bt_theme") !== "light") {
+          document.documentElement.classList.add("dark");
+        }
+      } catch (e) {}
+    })();
+  </script>
+
+  <!-- ===== Tailwind CSS via CDN + shared brand config (assets/tw.js) ===== -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="assets/tw.js"></script>
+
+  <link rel="stylesheet" href="assets/styles.css" />
+
+  <!-- ===== JSON-LD: WebSite + SearchAction (rich SEO) ===== -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    "name": "Bored Tasks",
+    "url": "https://boredtasks.example/",
+    "description": "Addictive quizzes, trivia and hundreds of fun things to do when you're bored.",
+    "potentialAction": {
+      "@type": "SearchAction",
+      "target": "https://boredtasks.example/index.html#/search?q={search_term_string}",
+      "query-input": "required name=search_term_string"
+    }
+  }
+  </script>
+</head>
+
+<body class="min-h-screen bg-white text-slate-900 antialiased dark:bg-slate-950 dark:text-slate-100">
+
+  <!-- Shared header (rendered by ui.js) -->
+  <header id="bt-header"></header>
+
+  <!-- The SPA renders every view into here. Each view places its own ad slots
+       (ADSENSE PLACEHOLDER) so the hero can flow straight from the header. -->
+  <main id="bt-app" class="min-h-[60vh]"></main>
+
+  <!-- Shared footer (rendered by ui.js) -->
+  <footer id="bt-footer"></footer>
+
+  <!-- ===== Scripts =====
+       Order matters: data.js defines BT_DATA, the quiz packs push into it,
+       THEN app.js renders. ui.js (shared shell) self-boots independently. -->
+  <script src="assets/data.js"></script>
+  <script src="assets/quizzes/q-age-lovelang.js"></script>
+  <script src="assets/quizzes/q-talent-redflag.js"></script>
+  <script src="assets/quizzes/q-decade-toxic.js"></script>
+  <script src="assets/quizzes/q-emoage-job.js"></script>
+  <script src="assets/quizzes/q-attach-party.js"></script>
+  <script src="assets/quizzes/q-aesthetic.js"></script>
+  <script src="assets/quizzes/q-trivia-pop-meme.js"></script>
+  <script src="assets/quizzes/q-trivia-gk-adult.js"></script>
+  <script src="assets/quizzes/q-trivia-disney.js"></script>
+  <script src="assets/quizzes/q-new-pack.js"></script>
+  <script src="assets/quizzes/q-trivia-pack2.js"></script>
+  <script src="assets/ui.js"></script>
+  <script src="assets/app.js"></script>
+</body>
+</html>

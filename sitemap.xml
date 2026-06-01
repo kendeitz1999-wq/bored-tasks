@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Bored Tasks sitemap. Replace https://boredtasks.example/ with your real
+     domain before submitting to Google Search Console. SPA quiz routes use a
+     hash (#/quiz/...) which crawlers treat as the index page; the real,
+     individually-crawlable pages (blog posts + legal) are listed below. -->
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url><loc>https://boredtasks.example/</loc><changefreq>daily</changefreq><priority>1.0</priority></url>
+  <url><loc>https://boredtasks.example/blog.html</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://boredtasks.example/about.html</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://boredtasks.example/contact.html</loc><changefreq>monthly</changefreq><priority>0.4</priority></url>
+  <url><loc>https://boredtasks.example/privacy.html</loc><changefreq>yearly</changefreq><priority>0.3</priority></url>
+  <url><loc>https://boredtasks.example/terms.html</loc><changefreq>yearly</changefreq><priority>0.3</priority></url>
+
+  <url><loc>https://boredtasks.example/blog/why-personality-quizzes-are-addictive.html</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://boredtasks.example/blog/what-your-quiz-results-say-about-dating.html</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://boredtasks.example/blog/100-ways-to-cure-boredom.html</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://boredtasks.example/blog/psychology-of-procrastination.html</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://boredtasks.example/blog/science-of-sharing-quiz-results.html</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://boredtasks.example/blog/50-cheap-things-to-do-when-broke.html</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://boredtasks.example/blog/beat-boredom-at-work.html</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://boredtasks.example/blog/mental-health-benefits-of-boredom.html</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://boredtasks.example/blog/are-you-a-main-character.html</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://boredtasks.example/blog/30-day-boredom-busting-challenge.html</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://boredtasks.example/blog/healing-era-explained.html</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://boredtasks.example/blog/situationship-psychology.html</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://boredtasks.example/blog/loud-budgeting-trend.html</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://boredtasks.example/blog/dopamine-detox-truth.html</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://boredtasks.example/blog/bed-rotting-self-care.html</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
+</urlset>
