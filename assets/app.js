@@ -172,20 +172,21 @@
               '<button data-random-quiz class="group inline-flex w-full items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-indigo-500 to-violet-500 px-8 py-4 text-base font-extrabold text-white shadow-xl shadow-indigo-500/30 transition hover:scale-[1.03] sm:w-auto">Take a quiz <span class="text-xl transition-transform group-hover:translate-x-1">→</span></button>' +
               '<button data-random-task class="inline-flex w-full items-center justify-center gap-2 rounded-2xl border-2 border-indigo-400 bg-indigo-50 px-8 py-4 text-base font-extrabold text-indigo-600 shadow-sm transition hover:scale-[1.03] hover:bg-indigo-100 dark:border-indigo-400/70 dark:bg-indigo-500/15 dark:text-indigo-200 dark:hover:bg-indigo-500/25 sm:w-auto">🎲 I\'m bored, surprise me</button>' +
             '</div>' +
-            '<a href="#/quizzes" class="mt-4 inline-block text-sm font-bold text-slate-500 underline-offset-4 transition hover:text-indigo-500 hover:underline dark:text-slate-400">or browse all quizzes</a>' +
+            '<a href="#/categories" class="mt-4 inline-block text-sm font-bold text-slate-500 underline-offset-4 transition hover:text-indigo-500 hover:underline dark:text-slate-400">or browse all categories</a>' +
           '</div>' +
         '</div>' +
       '</section>' +
 
       '<div class="mx-auto max-w-7xl px-4 sm:px-6">' +
-        // TODAY'S DARE - daily hook to bring people back
-        homeDareBand() +
         // TRENDING carousel - big cards lead the page
         '<section class="py-6">' + sectionHead("🔥 Trending now", "What everyone\'s obsessing over today", ["See all", "#/quizzes"]) +
           '<div class="bt-carousel flex gap-4 overflow-x-auto pb-4">' +
             trending.map(function (q) { return '<div class="w-[74%] shrink-0 sm:w-[300px]">' + quizCard(q) + '</div>'; }).join("") +
           '</div>' +
         '</section>' +
+
+        // TODAY'S DARE - daily hook, right under the trending cards
+        homeDareBand() +
 
         adSlot("home-top", 90) +
 
