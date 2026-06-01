@@ -159,7 +159,11 @@
         '<div class="bt-dots pointer-events-none absolute inset-0 text-slate-300 opacity-20 dark:text-slate-700"></div>' +
         '<div class="relative mx-auto max-w-7xl px-4 pb-10 pt-24 sm:px-6 sm:pt-28">' +
           '<div class="mx-auto max-w-3xl text-center bt-fade-up">' +
-            '<span class="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white/70 px-4 py-1.5 text-sm font-semibold text-slate-600 shadow-sm backdrop-blur dark:border-slate-700 dark:bg-slate-900/70 dark:text-slate-300">✨ ' + D.quizzes.length + ' quizzes · ' + D.activities.length + ' boredom busters · ' + 'a new dare daily</span>' +
+            '<div class="flex flex-wrap items-center justify-center gap-2">' +
+              [["✨", D.quizzes.length + " quizzes"], ["💡", D.activities.length + " boredom busters"], ["🎯", "New dare daily"], ["🎭", D.stories.length + " stories"]].map(function (c) {
+                return '<span class="inline-flex items-center gap-1.5 rounded-full border border-slate-200 bg-white/70 px-3 py-1.5 text-sm font-semibold text-slate-600 shadow-sm backdrop-blur dark:border-slate-700 dark:bg-slate-900/70 dark:text-slate-300">' + c[0] + ' ' + c[1] + '</span>';
+              }).join("") +
+            '</div>' +
             '<h1 class="mt-5 text-5xl font-black leading-[1.02] tracking-tight text-slate-900 dark:text-white sm:text-7xl">Cure Your <span class="bt-gradient-text">Boredom</span></h1>' +
             '<p class="mx-auto mt-5 max-w-xl text-lg text-slate-500 dark:text-slate-400">Hilariously accurate quizzes, brain-melting trivia, and hundreds of things to do right now. Pick one and stay un-bored.</p>' +
             // SEARCH
