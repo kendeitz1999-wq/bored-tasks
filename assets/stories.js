@@ -11,27 +11,27 @@
 (function () {
   if (!window.BT_DATA) return;
 
-  // Topical scene photos via LoremFlickr (keyword-matched real photos, so the
-  // image actually fits the story instead of being random). Each story has a
-  // small keyword pool; the seed (e.g. "bts1cover", "bts1n3", "bts2eghost")
-  // selects the story's pool and a stable, on-theme image per node. Covers use
-  // the pool's headline keyword; other nodes are hashed across the pool.
+  // Scene photos via reliable Unsplash ids (the CDN handles a whole page of
+  // images at once; LoremFlickr 500'd under that load). Each story has a small
+  // pool of on-theme, verified ids; the seed (e.g. "bts1cover", "bts1n3",
+  // "bts2eghost") picks the story's pool and a stable image per node. Covers use
+  // the headline id; other nodes hash across the pool so the scene changes.
   var SCENES = {
-    bts1: ["money,cash", "luxury,gold", "mansion,villa", "jet,travel", "skyline,city", "sunset,ocean", "party,celebration", "shopping,luxury"],
-    bts2: ["smartphone,selfie", "socialmedia,phone", "influencer,camera", "concert,crowd", "microphone,studio", "neon,city", "laptop,desk", "spotlight,stage"],
-    bts3: ["couple,romance", "texting,night", "coffee,date", "sunset,silhouette", "rain,window", "city,night", "love,hearts", "park,walking"],
-    bts4: ["friends,smartphone", "friends,phones", "map,travel", "airport,luggage", "confetti,party", "laptop,planning", "party,friends", "popcorn,watching"],
-    bts5: ["smartphone,notification", "city,street", "coffee,morning", "crowd,city", "sunrise,rooftop", "shopping,bags", "meditation,calm", "neon,night"]
+    bts1: ["1523398002811-999ca8dec234", "1514362545857-3bc16c4c7d1b", "1490481651871-ab68de25d43d", "1488646953014-85cb44e25828", "1502301197179-65228ab57f78", "1489599849927-2ee91cede3ba", "1470252649378-9c29740c9fa8", "1445116572660-236099ec97a0"],
+    bts2: ["1556761175-5973dc0f32e7", "1489599849927-2ee91cede3ba", "1469854523086-cc02fe5d8800", "1610890716171-6b1bb98ffd09", "1502301197179-65228ab57f78", "1513151233558-d860c5398176", "1470252649378-9c29740c9fa8", "1490481651871-ab68de25d43d"],
+    bts3: ["1522708323590-d24dbb6b0267", "1519681393784-d120267933ba", "1445116572660-236099ec97a0", "1470252649378-9c29740c9fa8", "1541781774459-bb2af2f05b55", "1518609878373-06d740f60d8b", "1476611338391-6f395a0ebc7b", "1514362545857-3bc16c4c7d1b"],
+    bts4: ["1556761175-5973dc0f32e7", "1489599849927-2ee91cede3ba", "1488646953014-85cb44e25828", "1610890716171-6b1bb98ffd09", "1599490659213-e2b9527bd087", "1452251889946-8ff5ea7b27ab", "1502301197179-65228ab57f78", "1445116572660-236099ec97a0"],
+    bts5: ["1556761175-5973dc0f32e7", "1502301197179-65228ab57f78", "1445116572660-236099ec97a0", "1470252649378-9c29740c9fa8", "1518609878373-06d740f60d8b", "1497032628192-86f99bcd76bc", "1488646953014-85cb44e25828", "1526401485004-46910ecc8e51"]
   };
   function IMG(seed) {
     var m = /^(bts\d+)(.*)$/.exec(seed) || [];
-    var pool = SCENES[m[1]] || ["lifestyle,aesthetic"];
+    var pool = SCENES[m[1]] || SCENES.bts1;
     var suffix = m[2] || seed;
     var h = 2166136261 >>> 0;
     for (var i = 0; i < suffix.length; i++) { h ^= suffix.charCodeAt(i); h = Math.imul(h, 16777619); }
     h = h >>> 0;
-    var kw = /cover$/.test(seed) ? pool[0] : pool[h % pool.length];
-    return "https://loremflickr.com/1200/700/" + kw + "?lock=" + (h % 100000);
+    var id = /cover$/.test(seed) ? pool[0] : pool[h % pool.length];
+    return "https://images.unsplash.com/photo-" + id; // app.js imgUrl() adds sizing
   }
 
   BT_DATA.stories = (BT_DATA.stories || []).concat([

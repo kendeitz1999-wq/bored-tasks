@@ -183,6 +183,13 @@
       '</section>' +
 
       '<div class="mx-auto max-w-7xl px-4 sm:px-6">' +
+        // FROM THE BLOG - featured up top (long-form reads lead the feed)
+        '<section class="py-7">' + sectionHead("📖 From the Blog", "Long reads on your brain, your money and your vibe", ["All articles", BASE + "blog.html"]) +
+          '<div class="bt-stagger grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">' +
+            D.blogPosts.slice(0, 3).map(blogCard).join("") +
+          '</div>' +
+        '</section>' +
+
         // TRENDING carousel - big cards lead the page
         '<section class="py-6">' + sectionHead("🔥 Trending now", "What everyone\'s obsessing over today", ["See all", "#/quizzes"]) +
           '<div class="bt-carousel flex gap-4 overflow-x-auto pb-4">' +

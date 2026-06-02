@@ -26,6 +26,7 @@
     <!-- ===== ADSENSE PLACEHOLDER (blog index banner) ===== -->
     <div class="bt-ad my-8 flex h-[90px] items-center justify-center rounded-xl border border-dashed border-slate-300 text-xs font-medium uppercase tracking-widest text-slate-400 dark:border-slate-700" data-ad-slot="blog-index">Advertisement</div>
 
+    <div id="blog-cats" class="bt-carousel -mx-4 mt-2 mb-6 flex gap-2 overflow-x-auto px-4 pb-2 sm:mx-0 sm:flex-wrap sm:px-0"></div>
     <div id="blog-grid" class="bt-stagger grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3"></div>
   </main>
 
@@ -38,15 +39,22 @@
     (function () {
       function imgUrl(u, w) { return u && u.indexOf("images.unsplash.com") > -1 ? u + (u.indexOf("?") > -1 ? "&" : "?") + "auto=format&fit=crop&w=" + w + "&q=70" : u; }
       function esc(s){return String(s||"").replace(/[&<>"]/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c];});}
-      var grid = document.getElementById("blog-grid");
-      grid.innerHTML = (window.BT_DATA ? BT_DATA.blogPosts : []).map(function (p) {
+      var posts = window.BT_DATA ? BT_DATA.blogPosts : [];
+      var cats = ["All"]; posts.forEach(function (p) { if (cats.indexOf(p.category) < 0) cats.push(p.category); });
+      var active = "All";
+      var catsEl = document.getElementById("blog-cats"), grid = document.getElementById("blog-grid");
+      function card(p) {
         return '<a href="blog/' + p.slug + '.html" class="group flex flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm transition hover:-translate-y-1 hover:shadow-xl dark:border-slate-800 dark:bg-slate-900">' +
           '<div class="relative aspect-[16/9] overflow-hidden"><img loading="lazy" src="' + imgUrl(p.image, 700) + '" alt="' + esc(p.title) + '" class="h-full w-full object-cover transition duration-500 group-hover:scale-105"></div>' +
           '<div class="flex flex-1 flex-col p-5"><span class="text-xs font-bold uppercase tracking-wide text-coral-500">' + esc(p.category) + ' · ' + p.readMinutes + ' min read</span>' +
           '<h2 class="mt-2 text-lg font-extrabold leading-snug text-slate-900 group-hover:text-coral-500 dark:text-white">' + esc(p.title) + '</h2>' +
           '<p class="mt-2 flex-1 text-sm text-slate-500 dark:text-slate-400">' + esc(p.excerpt) + '</p>' +
           '<span class="mt-3 text-sm font-bold text-teal-500">Read article →</span></div></a>';
-      }).join("");
+      }
+      function renderCats() { catsEl.innerHTML = cats.map(function (c) { return '<button data-cat="' + esc(c) + '" class="bt-chip ' + (c === active ? "is-active" : "") + '">' + esc(c) + '</button>'; }).join(""); }
+      function renderGrid() { grid.innerHTML = posts.filter(function (p) { return active === "All" || p.category === active; }).map(card).join(""); }
+      catsEl.addEventListener("click", function (e) { var b = e.target.closest("[data-cat]"); if (!b) return; active = b.getAttribute("data-cat"); renderCats(); renderGrid(); });
+      renderCats(); renderGrid();
     })();
   </script>
 </body>

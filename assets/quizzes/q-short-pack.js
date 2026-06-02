@@ -13,7 +13,7 @@
       title: "What's Your Role in the Friend Group?",
       category: "personality",
       type: "personality",
-      image: "https://loremflickr.com/1200/675/friends,laughing?lock=10101",
+      image: "https://images.unsplash.com/photo-1610890716171-6b1bb98ffd09",
       description: "Every squad has its main characters. Find out which one you actually are.",
       tagline: "Mom friend? Chaos gremlin? The glue holding it all together? Six questions and we will expose your exact role in the group chat.",
       estMinutes: 2,
@@ -57,10 +57,10 @@
         ] }
       ],
       results: [
-        { key: "mom", title: "The Mom Friend", emoji: "🧴", image: "https://loremflickr.com/800/600/coffee,cozy?lock=10102", description: "You carry the snacks, the chargers and everyone's emotional baggage. The group would not survive a single night out without you, and honestly they know it. You are the safe one, the reliable one, the human first-aid kit.", share: "I'm the Mom Friend of the group. Someone has to carry the snacks AND the trauma. 🧴" },
-        { key: "wildcard", title: "The Chaos Wildcard", emoji: "🃏", image: "https://loremflickr.com/800/600/party,confetti?lock=10103", description: "You are the reason there are stories. No plan is safe, no night is boring, and 'we should NOT but...' is basically your catchphrase. People follow you into questionable decisions and somehow never regret it.", share: "I'm the Chaos Wildcard. You're welcome for every story you have. 🃏" },
-        { key: "observer", title: "The Quiet Observer", emoji: "👀", image: "https://loremflickr.com/800/600/cafe,reading?lock=10104", description: "You say five words a night and all five go viral in the group chat. You see everything, judge gently and your one-liners are legendary. Still waters, devastating wit.", share: "I'm the Quiet Observer. I said four words tonight and ended someone's whole career. 👀" },
-        { key: "glue", title: "The Glue", emoji: "🫶", image: "https://loremflickr.com/800/600/friends,group?lock=10105", description: "You are the reason the group still exists. You plan the hangs, remember the birthdays and quietly hold the whole friendship together. Underappreciated? Maybe. Essential? Completely.", share: "I'm the Glue. Without me this friend group would simply cease to exist. 🫶" }
+        { key: "mom", title: "The Mom Friend", emoji: "🧴", image: "https://images.unsplash.com/photo-1445116572660-236099ec97a0", description: "You carry the snacks, the chargers and everyone's emotional baggage. The group would not survive a single night out without you, and honestly they know it. You are the safe one, the reliable one, the human first-aid kit.", share: "I'm the Mom Friend of the group. Someone has to carry the snacks AND the trauma. 🧴" },
+        { key: "wildcard", title: "The Chaos Wildcard", emoji: "🃏", image: "https://images.unsplash.com/photo-1452251889946-8ff5ea7b27ab", description: "You are the reason there are stories. No plan is safe, no night is boring, and 'we should NOT but...' is basically your catchphrase. People follow you into questionable decisions and somehow never regret it.", share: "I'm the Chaos Wildcard. You're welcome for every story you have. 🃏" },
+        { key: "observer", title: "The Quiet Observer", emoji: "👀", image: "https://images.unsplash.com/photo-1445116572660-236099ec97a0", description: "You say five words a night and all five go viral in the group chat. You see everything, judge gently and your one-liners are legendary. Still waters, devastating wit.", share: "I'm the Quiet Observer. I said four words tonight and ended someone's whole career. 👀" },
+        { key: "glue", title: "The Glue", emoji: "🫶", image: "https://images.unsplash.com/photo-1452251889946-8ff5ea7b27ab", description: "You are the reason the group still exists. You plan the hangs, remember the birthdays and quietly hold the whole friendship together. Underappreciated? Maybe. Essential? Completely.", share: "I'm the Glue. Without me this friend group would simply cease to exist. 🫶" }
       ]
     },
 
@@ -71,7 +71,7 @@
       title: "What's Your Texting Personality?",
       category: "personality",
       type: "personality",
-      image: "https://loremflickr.com/1200/675/smartphone,texting?lock=20201",
+      image: "https://images.unsplash.com/photo-1469854523086-cc02fe5d8800",
       description: "Your texting habits say more about you than your star sign. Let's diagnose them.",
       tagline: "Dry texter? Double texter? Voice-note menace? We'll read your messages and then read YOU.",
       estMinutes: 2,
@@ -115,10 +115,10 @@
         ] }
       ],
       results: [
-        { key: "dry", title: "The Dry Texter", emoji: "🏜️", image: "https://loremflickr.com/800/600/desert,minimal?lock=20202", description: "'k'. 'lol'. 'same'. You could be having the best conversation of your life and it would still read like a hostage negotiation. Iconic, low effort, deeply mysterious. People work for your full sentences.", share: "Apparently I'm a Dry Texter. 'k'. 🏜️" },
-        { key: "double", title: "The Double (Triple) Texter", emoji: "📲", image: "https://loremflickr.com/800/600/smartphone,notifications?lock=20203", description: "Why send one message when you can send eight? You text like you talk: fast, a lot and with zero chill. Your energy is unmatched and slightly exhausting in the best possible way.", share: "I'm a Double Texter and my 2am thoughts are everyone's problem. 📲" },
-        { key: "voicenote", title: "The Voice-Note Menace", emoji: "🎙️", image: "https://loremflickr.com/800/600/microphone,podcast?lock=20204", description: "You hit record and send four minutes of pure stream of consciousness. Typing is for the weak. Your friends love you but also visibly brace themselves before opening the chat.", share: "I'm a Voice-Note Menace. My messages come with a runtime. 🎙️" },
-        { key: "reactor", title: "The Reaction-Only Replier", emoji: "❤️", image: "https://loremflickr.com/800/600/heart,neon?lock=20205", description: "You'll heart a message before you'll ever type a word back. Why reply when a thumbs up exists? Efficient, a little chaotic and absolutely impossible to read.", share: "I'm a Reaction-Only Replier. I'll heart this, never respond. ❤️" }
+        { key: "dry", title: "The Dry Texter", emoji: "🏜️", image: "https://images.unsplash.com/photo-1470252649378-9c29740c9fa8", description: "'k'. 'lol'. 'same'. You could be having the best conversation of your life and it would still read like a hostage negotiation. Iconic, low effort, deeply mysterious. People work for your full sentences.", share: "Apparently I'm a Dry Texter. 'k'. 🏜️" },
+        { key: "double", title: "The Double (Triple) Texter", emoji: "📲", image: "https://images.unsplash.com/photo-1610890716171-6b1bb98ffd09", description: "Why send one message when you can send eight? You text like you talk: fast, a lot and with zero chill. Your energy is unmatched and slightly exhausting in the best possible way.", share: "I'm a Double Texter and my 2am thoughts are everyone's problem. 📲" },
+        { key: "voicenote", title: "The Voice-Note Menace", emoji: "🎙️", image: "https://images.unsplash.com/photo-1556761175-5973dc0f32e7", description: "You hit record and send four minutes of pure stream of consciousness. Typing is for the weak. Your friends love you but also visibly brace themselves before opening the chat.", share: "I'm a Voice-Note Menace. My messages come with a runtime. 🎙️" },
+        { key: "reactor", title: "The Reaction-Only Replier", emoji: "❤️", image: "https://images.unsplash.com/photo-1470252649378-9c29740c9fa8", description: "You'll heart a message before you'll ever type a word back. Why reply when a thumbs up exists? Efficient, a little chaotic and absolutely impossible to read.", share: "I'm a Reaction-Only Replier. I'll heart this, never respond. ❤️" }
       ]
     },
 
@@ -129,7 +129,7 @@
       title: "What's Your Dating App Persona?",
       category: "love",
       type: "personality",
-      image: "https://loremflickr.com/1200/675/smartphone,dating?lock=30301",
+      image: "https://images.unsplash.com/photo-1556761175-5973dc0f32e7",
       description: "Be honest about your swiping habits and we'll reveal your dating app alter ego.",
       tagline: "We all become a slightly different person on the apps. Six questions to expose exactly who you turn into.",
       estMinutes: 2,
@@ -173,10 +173,10 @@
         ] }
       ],
       results: [
-        { key: "swiper", title: "The Serial Swiper", emoji: "🔥", image: "https://loremflickr.com/800/600/fire,neon?lock=30302", description: "Swiping is your cardio. You've matched with half the city and remember roughly none of them. It is not about finding 'the one', it is about the sweet, fleeting thrill of the next swipe.", share: "Turns out I'm a Serial Swiper. Swiping is my cardio. 🔥" },
-        { key: "romantic", title: "The Hopeless Romantic", emoji: "💘", image: "https://loremflickr.com/800/600/roses,romance?lock=30303", description: "You read every bio like a love letter and you're already naming the kids by match three. You came to the apps for real love, and absolutely nothing, not even the chaos, can dim your hope.", share: "I'm a Hopeless Romantic. Matched at noon, planning the wedding by 1pm. 💘" },
-        { key: "ghost", title: "The Soft Ghoster", emoji: "👻", image: "https://loremflickr.com/800/600/fog,mist?lock=30304", description: "You match, you chat, you vanish like morning mist. No closure, no explanation, just vibes. You're not a bad person, you simply maintain a quiet graveyard of unfinished conversations.", share: "I'm a Soft Ghoster. My DMs are a graveyard and I am so sorry. 👻" },
-        { key: "perfectionist", title: "The Profile Perfectionist", emoji: "📸", image: "https://loremflickr.com/800/600/camera,portrait?lock=30305", description: "Six photos, a witty bio and a prompt that took three hours. Your profile is a personal brand and you've genuinely A/B tested your opening line. Curated, intentional, just a little unhinged.", share: "I'm a Profile Perfectionist. My bio has been A/B tested. 📸" }
+        { key: "swiper", title: "The Serial Swiper", emoji: "🔥", image: "https://images.unsplash.com/photo-1599490659213-e2b9527bd087", description: "Swiping is your cardio. You've matched with half the city and remember roughly none of them. It is not about finding 'the one', it is about the sweet, fleeting thrill of the next swipe.", share: "Turns out I'm a Serial Swiper. Swiping is my cardio. 🔥" },
+        { key: "romantic", title: "The Hopeless Romantic", emoji: "💘", image: "https://images.unsplash.com/photo-1519681393784-d120267933ba", description: "You read every bio like a love letter and you're already naming the kids by match three. You came to the apps for real love, and absolutely nothing, not even the chaos, can dim your hope.", share: "I'm a Hopeless Romantic. Matched at noon, planning the wedding by 1pm. 💘" },
+        { key: "ghost", title: "The Soft Ghoster", emoji: "👻", image: "https://images.unsplash.com/photo-1518609878373-06d740f60d8b", description: "You match, you chat, you vanish like morning mist. No closure, no explanation, just vibes. You're not a bad person, you simply maintain a quiet graveyard of unfinished conversations.", share: "I'm a Soft Ghoster. My DMs are a graveyard and I am so sorry. 👻" },
+        { key: "perfectionist", title: "The Profile Perfectionist", emoji: "📸", image: "https://images.unsplash.com/photo-1469854523086-cc02fe5d8800", description: "Six photos, a witty bio and a prompt that took three hours. Your profile is a personal brand and you've genuinely A/B tested your opening line. Curated, intentional, just a little unhinged.", share: "I'm a Profile Perfectionist. My bio has been A/B tested. 📸" }
       ]
     },
 
@@ -187,7 +187,7 @@
       title: "How Do You Actually Act Around Your Crush?",
       category: "love",
       type: "personality",
-      image: "https://loremflickr.com/1200/675/couple,coffee?lock=40401",
+      image: "https://images.unsplash.com/photo-1519681393784-d120267933ba",
       description: "Cool and collected, or a malfunctioning robot? Let's find out the painful truth.",
       tagline: "Six questions to reveal what you secretly become the second your crush walks into the room.",
       estMinutes: 2,
@@ -231,10 +231,10 @@
         ] }
       ],
       results: [
-        { key: "bold", title: "The Bold Mover", emoji: "😎", image: "https://loremflickr.com/800/600/confident,sunglasses?lock=40402", description: "Crush in the room? You make a move. You shoot your shot, hold the eye contact and let them know what's up. Rejection scares you far less than spending forever wondering 'what if'.", share: "I'm the Bold Mover. I shoot my shot, win or learn. 😎" },
-        { key: "glitch", title: "The Malfunctioning Robot", emoji: "🤖", image: "https://loremflickr.com/800/600/confused,nervous?lock=40403", description: "The second they look at you, your brain blue-screens. You forget your own name, laugh too loud and walk into furniture. It's painful, it's adorable and it is deeply, universally relatable.", share: "Around my crush I'm a Malfunctioning Robot. I forgot my own name once. 🤖" },
-        { key: "cool", title: "The Ice Sculpture", emoji: "🕶️", image: "https://loremflickr.com/800/600/ice,cool?lock=40404", description: "You would rather perish than let them know you care. You play it so cool you basically freeze them out entirely. Inside? Total meltdown. Outside? A flawless, unbothered ice sculpture.", share: "I'm an Ice Sculpture around my crush. Dying inside, frozen outside. 🕶️" },
-        { key: "secret", title: "The Secret Admirer", emoji: "📓", image: "https://loremflickr.com/800/600/notebook,diary?lock=40405", description: "You've watched their entire story, memorized their schedule and never said a single word. You love from afar with the dedication of a detective and the courage of a small, nervous mouse.", share: "I'm a Secret Admirer. They have no idea and they never will. 📓" }
+        { key: "bold", title: "The Bold Mover", emoji: "😎", image: "https://images.unsplash.com/photo-1514362545857-3bc16c4c7d1b", description: "Crush in the room? You make a move. You shoot your shot, hold the eye contact and let them know what's up. Rejection scares you far less than spending forever wondering 'what if'.", share: "I'm the Bold Mover. I shoot my shot, win or learn. 😎" },
+        { key: "glitch", title: "The Malfunctioning Robot", emoji: "🤖", image: "https://images.unsplash.com/photo-1599490659213-e2b9527bd087", description: "The second they look at you, your brain blue-screens. You forget your own name, laugh too loud and walk into furniture. It's painful, it's adorable and it is deeply, universally relatable.", share: "Around my crush I'm a Malfunctioning Robot. I forgot my own name once. 🤖" },
+        { key: "cool", title: "The Ice Sculpture", emoji: "🕶️", image: "https://images.unsplash.com/photo-1567016432779-094069958ea5", description: "You would rather perish than let them know you care. You play it so cool you basically freeze them out entirely. Inside? Total meltdown. Outside? A flawless, unbothered ice sculpture.", share: "I'm an Ice Sculpture around my crush. Dying inside, frozen outside. 🕶️" },
+        { key: "secret", title: "The Secret Admirer", emoji: "📓", image: "https://images.unsplash.com/photo-1549465220-1a8b9238cd48", description: "You've watched their entire story, memorized their schedule and never said a single word. You love from afar with the dedication of a detective and the courage of a small, nervous mouse.", share: "I'm a Secret Admirer. They have no idea and they never will. 📓" }
       ]
     },
 
@@ -245,7 +245,7 @@
       title: "What's Your Weekend Personality?",
       category: "life",
       type: "personality",
-      image: "https://loremflickr.com/1200/675/weekend,relax?lock=50501",
+      image: "https://images.unsplash.com/photo-1541781774459-bb2af2f05b55",
       description: "How you spend your Saturday says everything. Find your true weekend type.",
       tagline: "Out till sunrise or rotting in bed with snacks? Six questions to reveal your real weekend soul.",
       estMinutes: 2,
@@ -289,10 +289,10 @@
         ] }
       ],
       results: [
-        { key: "gremlin", title: "The Bed Rotter", emoji: "🛌", image: "https://loremflickr.com/800/600/bed,cozy?lock=50502", description: "Your weekend is a horizontal experience. Snacks, a screen and absolutely zero plans is the dream. You have earned this rot, you are thriving in this rot, and you will not be apologizing for it.", share: "I'm a Bed Rotter. My weekend is horizontal and I regret nothing. 🛌" },
-        { key: "social", title: "The Social Butterfly", emoji: "🦋", image: "https://loremflickr.com/800/600/brunch,friends?lock=50503", description: "If there is a hangout, you are there. Brunch, then friends, then a third event you somehow also said yes to. Your weekend has a full itinerary and, frankly, a waitlist.", share: "I'm a Social Butterfly. My weekend has an itinerary and a waitlist. 🦋" },
-        { key: "adventurer", title: "The Adventure Seeker", emoji: "🧗", image: "https://loremflickr.com/800/600/hiking,mountains?lock=50504", description: "Hikes, day trips, 'let's just drive somewhere and see'. You treat the weekend like a side quest and routine makes you itchy. New place, new plan, no time to waste.", share: "I'm an Adventure Seeker. Routine makes me itchy, let's go somewhere. 🧗" },
-        { key: "productive", title: "The Productivity Machine", emoji: "✅", image: "https://loremflickr.com/800/600/checklist,desk?lock=50505", description: "Weekend? You mean catch-up time. You meal-prep, deep-clean and cross off the list while everyone else sleeps in. It is a lot, but Monday-you is always quietly grateful.", share: "I'm a Productivity Machine. I meal-prepped while you slept in. ✅" }
+        { key: "gremlin", title: "The Bed Rotter", emoji: "🛌", image: "https://images.unsplash.com/photo-1522869635100-9f4c5e86aa37", description: "Your weekend is a horizontal experience. Snacks, a screen and absolutely zero plans is the dream. You have earned this rot, you are thriving in this rot, and you will not be apologizing for it.", share: "I'm a Bed Rotter. My weekend is horizontal and I regret nothing. 🛌" },
+        { key: "social", title: "The Social Butterfly", emoji: "🦋", image: "https://images.unsplash.com/photo-1514362545857-3bc16c4c7d1b", description: "If there is a hangout, you are there. Brunch, then friends, then a third event you somehow also said yes to. Your weekend has a full itinerary and, frankly, a waitlist.", share: "I'm a Social Butterfly. My weekend has an itinerary and a waitlist. 🦋" },
+        { key: "adventurer", title: "The Adventure Seeker", emoji: "🧗", image: "https://images.unsplash.com/photo-1470252649378-9c29740c9fa8", description: "Hikes, day trips, 'let's just drive somewhere and see'. You treat the weekend like a side quest and routine makes you itchy. New place, new plan, no time to waste.", share: "I'm an Adventure Seeker. Routine makes me itchy, let's go somewhere. 🧗" },
+        { key: "productive", title: "The Productivity Machine", emoji: "✅", image: "https://images.unsplash.com/photo-1488521787991-ed7bbaae773c", description: "Weekend? You mean catch-up time. You meal-prep, deep-clean and cross off the list while everyone else sleeps in. It is a lot, but Monday-you is always quietly grateful.", share: "I'm a Productivity Machine. I meal-prepped while you slept in. ✅" }
       ]
     }
 

@@ -42,7 +42,17 @@
       try { (window.adsbygoogle = window.adsbygoogle || []).push({}); } catch (e) {}
     }
   }
-  window.BTAds = { unit: adUnit, refresh: refreshAds, ensure: ensureAds, client: AD_CLIENT, slot: AD_SLOT };
+  // Upgrade the static "Advertisement" placeholders on the blog pages (they use
+  // div.bt-ad[data-ad-slot]) into real responsive ad units, so every article is
+  // monetized from the single AD_SLOT config above. No-op on the SPA.
+  function upgradeLegacyAds() {
+    document.querySelectorAll("div.bt-ad[data-ad-slot]").forEach(function (el) {
+      if (el.querySelector("ins")) return;
+      el.className = "bt-ad not-prose my-6 text-center";
+      el.innerHTML = '<ins class="adsbygoogle" style="display:block" data-ad-client="' + AD_CLIENT + '" data-ad-slot="' + AD_SLOT + '" data-ad-format="auto" data-full-width-responsive="true"></ins>';
+    });
+  }
+  window.BTAds = { unit: adUnit, refresh: refreshAds, ensure: ensureAds, upgrade: upgradeLegacyAds, client: AD_CLIENT, slot: AD_SLOT };
 
   var NAV = [
     { label: "Home",            href: APP + "#/" },
@@ -204,17 +214,18 @@
 
   /* ---- Boot -------------------------------------------------------------- */
   /* ---- Image fallback ---------------------------------------------------
-     If any stock image 404s (e.g. a stale Unsplash id), swap to a keyword
-     photo so the UI never shows a broken image AND the replacement still
-     loosely matches the subject (derived from the alt text). Capture phase so
-     it catches <img> errors that don't bubble. */
+     If any stock image 404s (e.g. a stale Unsplash id), swap to a guaranteed
+     picsum placeholder so the UI never shows a broken image. Picsum is rock
+     solid under load; we keep it strictly as the last-resort safety net (the
+     primary images are reliable Unsplash). Capture phase catches <img> errors
+     that don't bubble. */
   function wireImageFallback() {
     document.addEventListener("error", function (e) {
       var t = e.target;
       if (!t || t.tagName !== "IMG" || t.dataset.btFallback) return;
       t.dataset.btFallback = "1";
-      var kw = (t.getAttribute("alt") || "").toLowerCase().replace(/[^a-z0-9]+/g, ",").replace(/^,+|,+$/g, "").split(",").filter(Boolean).slice(0, 2).join(",") || "aesthetic,mood";
-      t.src = "https://loremflickr.com/800/500/" + kw + "?lock=7";
+      var seed = encodeURIComponent((t.getAttribute("alt") || "bored").slice(0, 24) || "bored");
+      t.src = "https://picsum.photos/seed/" + seed + "/800/500";
     }, true);
   }
 
@@ -242,8 +253,9 @@
     wireBar();
     wireImageFallback();
     applyThemeIcon();
-    ensureAds();   // make sure the AdSense loader is present (no-op on index.html)
-    refreshAds();  // activate the footer unit (+ any units already on the page)
+    ensureAds();        // make sure the AdSense loader is present (no-op on index.html)
+    upgradeLegacyAds(); // turn static blog ad placeholders into real units
+    refreshAds();       // activate the footer unit (+ any units now on the page)
     document.addEventListener("click", function (e) {
       if (e.target.closest("[data-bt-theme-toggle]")) { e.preventDefault(); toggleTheme(); }
     });
