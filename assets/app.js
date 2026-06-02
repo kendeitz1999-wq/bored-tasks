@@ -136,8 +136,10 @@
   }
 
   function adSlot(label, h) {
-    // ===== ADSENSE PLACEHOLDER ===== replace this placeholder with a real ad unit (see README)
-    return '<div class="bt-ad my-8 flex items-center justify-center rounded-xl border border-dashed border-slate-300 text-xs font-medium uppercase tracking-widest text-slate-400 dark:border-slate-700" style="min-height:' + (h || 100) + 'px" data-ad-slot="' + label + '">Advertisement</div>';
+    // Real responsive AdSense unit. Markup + ad client/slot config live in
+    // ui.js (window.BTAds) so there's a single place to set them. h is unused
+    // now (the responsive unit sizes itself) but kept for call-site compat.
+    return (window.BTAds && window.BTAds.unit) ? window.BTAds.unit(label) : "";
   }
 
   function sectionHead(title, sub, link) {
@@ -1125,6 +1127,8 @@
     });
     // Daily Dare: start the countdown when the dare page is showing
     if (app.querySelector("[data-dare-countdown]")) { updateDareCountdown(); dareTimer = setInterval(updateDareCountdown, 1000); }
+    // Activate any AdSense units in the freshly rendered view.
+    if (window.BTAds) window.BTAds.refresh();
   }
 
   function copyLink() {

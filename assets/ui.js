@@ -9,6 +9,41 @@
   var BASE = document.documentElement.getAttribute("data-base") || "";
   var APP = BASE + "index.html";
 
+  /* ---- Google AdSense ---------------------------------------------------
+     The loader <script> is in index.html's <head>; ensureAds() also injects it
+     on the standalone pages (blog, about, etc.) so ads work site-wide. Ad units
+     are responsive (auto format + full-width-responsive) so they fit any screen
+     and collapse cleanly when unfilled, never breaking the layout.
+
+     SET THIS ONCE: replace AD_SLOT with a real ad unit id from your AdSense
+     dashboard (Ads > By ad unit > Display ads). One responsive unit id can be
+     reused for every placement. Until then the library loads but units are blank. */
+  var AD_CLIENT = "ca-pub-2187417002831910";
+  var AD_SLOT = "0000000000"; // TODO: paste your ad unit (slot) id here
+  function adUnit(zone) {
+    return '<div class="bt-ad my-8 text-center" data-ad-zone="' + (zone || "ad") + '">' +
+      '<ins class="adsbygoogle" style="display:block" data-ad-client="' + AD_CLIENT + '" data-ad-slot="' + AD_SLOT + '" data-ad-format="auto" data-full-width-responsive="true"></ins>' +
+    '</div>';
+  }
+  function ensureAds() {
+    if (document.querySelector('script[src*="adsbygoogle.js"]')) return; // already loaded (e.g. index.html)
+    var s = document.createElement("script");
+    s.async = true; s.setAttribute("crossorigin", "anonymous");
+    s.src = "https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=" + AD_CLIENT;
+    document.head.appendChild(s);
+  }
+  // Activate any ad units not yet started. Skips zero-width units (prevents the
+  // AdSense "availableWidth=0" error) so they retry on a later pass.
+  function refreshAds() {
+    var list = document.querySelectorAll("ins.adsbygoogle:not([data-ad-done])");
+    for (var i = 0; i < list.length; i++) {
+      if (!list[i].offsetWidth) continue;
+      list[i].setAttribute("data-ad-done", "1");
+      try { (window.adsbygoogle = window.adsbygoogle || []).push({}); } catch (e) {}
+    }
+  }
+  window.BTAds = { unit: adUnit, refresh: refreshAds, ensure: ensureAds, client: AD_CLIENT, slot: AD_SLOT };
+
   var NAV = [
     { label: "Home",            href: APP + "#/" },
     { label: "Daily",           href: APP + "#/daily-dare" },
@@ -104,7 +139,7 @@
     el.innerHTML =
       '<footer class="mt-20 border-t border-slate-200 bg-slate-50 dark:border-slate-800 dark:bg-slate-950">' +
         // ===== ADSENSE PLACEHOLDER (footer leaderboard) - see README to swap in real unit =====
-        '<div class="mx-auto max-w-7xl px-4 pt-10 sm:px-6"><div class="bt-ad flex h-[90px] items-center justify-center rounded-xl border border-dashed border-slate-300 text-xs font-medium uppercase tracking-widest text-slate-400 dark:border-slate-700" data-ad-slot="footer">Advertisement</div></div>' +
+        '<div class="mx-auto max-w-7xl px-4 pt-10 sm:px-6">' + adUnit("footer") + '</div>' +
         '<div class="mx-auto grid max-w-7xl gap-10 px-4 py-12 sm:px-6 md:grid-cols-2 lg:grid-cols-5">' +
           '<div class="lg:col-span-2">' + LOGO +
             '<p class="mt-4 max-w-sm text-sm leading-relaxed text-slate-500 dark:text-slate-400">Bored Tasks is your antidote to boredom: addictive personality quizzes, brain-tickling trivia, and hundreds of fun things to do when you have nothing to do. Curing boredom, one tap at a time.</p>' +
@@ -207,6 +242,8 @@
     wireBar();
     wireImageFallback();
     applyThemeIcon();
+    ensureAds();   // make sure the AdSense loader is present (no-op on index.html)
+    refreshAds();  // activate the footer unit (+ any units already on the page)
     document.addEventListener("click", function (e) {
       if (e.target.closest("[data-bt-theme-toggle]")) { e.preventDefault(); toggleTheme(); }
     });
